@@ -1,0 +1,13 @@
+{
+  "body": {
+    "detail": "This Idempotency-Key was already used with a different request.",
+    "error": {
+      "code": "idempotency_key_reused",
+      "field": "Idempotency-Key",
+      "message": "This Idempotency-Key was already used with a different request.",
+      "request_id": "req_f6b79ad4e2491bad314c6a8b"
+    }
+  },
+  "headers": {},
+  "status": 422
+}

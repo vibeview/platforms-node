@@ -1,0 +1,15 @@
+{
+  "body": {
+    "detail": "A live account of yours already has this external_ref.",
+    "error": {
+      "account": "org_a9fa23bd20299367",
+      "code": "external_ref_taken",
+      "field": "external_ref",
+      "message": "A live account of yours already has this external_ref.",
+      "request_id": "req_04dc33775fd5b2e17316c1c8",
+      "status": "active"
+    }
+  },
+  "headers": {},
+  "status": 409
+}

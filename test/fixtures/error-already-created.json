@@ -1,0 +1,14 @@
+{
+  "body": {
+    "detail": "This Idempotency-Key already created the object; its secret is shown only once.",
+    "error": {
+      "code": "already_created",
+      "id": "atok_923a04da2621e055",
+      "message": "This Idempotency-Key already created the object; its secret is shown only once.",
+      "object": "access_token",
+      "request_id": "req_b995510cdcccde70e08c58ff"
+    }
+  },
+  "headers": {},
+  "status": 409
+}

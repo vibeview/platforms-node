@@ -1,0 +1,12 @@
+{
+  "body": "{\"object\":\"event\",\"id\":\"evt_fb5ef81d192bd00552e4c913\",\"type\":\"account.created\",\"created\":1795373293,\"api_version\":\"2026-11-09\",\"partner\":\"ptn_18c3f13a23220a0e\",\"account\":{\"id\":\"org_a9fa23bd20299367\",\"external_ref\":\"fixture-cust\"},\"data\":{\"object\":{\"object\":\"account\",\"id\":\"org_a9fa23bd20299367\",\"external_ref\":\"fixture-cust\",\"status\":\"active\",\"suspended_by\":[],\"limits\":{\"concurrent_sessions\":1,\"max_session_minutes\":30,\"streaming_minutes_per_month\":100,\"build_minutes_per_month\":10,\"concurrent_builds\":1,\"storage_bytes\":1000000,\"collab_guests_per_session\":1},\"created\":1795373293}},\"livemode\":false}",
+  "headers": {
+    "webhook-id": "evt_fb5ef81d192bd00552e4c913",
+    "webhook-signature": "v1,gOMHby/4pdxkFY1d0LlFe/jaNNRkrmu8NB7QyEkDQOw=",
+    "webhook-timestamp": "1800000000"
+  },
+  "note": "A test secret made for this fixture, never a real one; join its two parts.",
+  "secret_body": "cGxhdGZvcm1zLXNkayB0ZXN0IGZpeHR1cmUgb25seSE=",
+  "secret_prefix": "whsec_",
+  "timestamp": 1800000000
+}

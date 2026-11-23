@@ -1,0 +1,5448 @@
+{
+  "components": {
+    "schemas": {
+      "AccessTokenOut": {
+        "description": "Shown once: ``token`` is never returned again.",
+        "properties": {
+          "account": {
+            "title": "Account",
+            "type": "string"
+          },
+          "expires_at": {
+            "title": "Expires At",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "object": {
+            "const": "access_token",
+            "default": "access_token",
+            "enum": [
+              "access_token"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Scopes",
+            "type": "array"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "token",
+          "account",
+          "scopes",
+          "expires_at"
+        ],
+        "title": "AccessTokenOut",
+        "type": "object"
+      },
+      "AccessTokenRevokedOut": {
+        "properties": {
+          "account": {
+            "title": "Account",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "object": {
+            "const": "access_token",
+            "default": "access_token",
+            "enum": [
+              "access_token"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "revoked": {
+            "const": true,
+            "default": true,
+            "enum": [
+              true
+            ],
+            "title": "Revoked",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "account"
+        ],
+        "title": "AccessTokenRevokedOut",
+        "type": "object"
+      },
+      "AccountCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only you see it; defaults to external_ref.",
+            "title": "Display Name"
+          },
+          "external_ref": {
+            "description": "Your own opaque id of the customer (no personal data).",
+            "title": "External Ref",
+            "type": "string"
+          },
+          "limits": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limits"
+          }
+        },
+        "required": [
+          "external_ref"
+        ],
+        "title": "AccountCreate",
+        "type": "object"
+      },
+      "AccountDeletionOut": {
+        "properties": {
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "deletion": {
+            "$ref": "#/components/schemas/Deletion"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "external_ref": {
+            "title": "External Ref",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/Limits"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "account",
+            "default": "account",
+            "enum": [
+              "account"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "suspended_by": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Suspended By",
+            "type": "array"
+          },
+          "suspended_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspended Reason"
+          }
+        },
+        "required": [
+          "id",
+          "external_ref",
+          "display_name",
+          "status",
+          "suspended_by",
+          "livemode",
+          "created",
+          "limits",
+          "deletion"
+        ],
+        "title": "AccountDeletionOut",
+        "type": "object"
+      },
+      "AccountList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/AccountOut"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "list",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "has_more"
+        ],
+        "title": "AccountList",
+        "type": "object"
+      },
+      "AccountOut": {
+        "properties": {
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "external_ref": {
+            "title": "External Ref",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/Limits"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "account",
+            "default": "account",
+            "enum": [
+              "account"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "suspended_by": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Suspended By",
+            "type": "array"
+          },
+          "suspended_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspended Reason"
+          }
+        },
+        "required": [
+          "id",
+          "external_ref",
+          "display_name",
+          "status",
+          "suspended_by",
+          "livemode",
+          "created",
+          "limits"
+        ],
+        "title": "AccountOut",
+        "type": "object"
+      },
+      "AccountSuspend": {
+        "additionalProperties": false,
+        "description": "``reason``: your own note (at most 200 characters), stored with the suspension\nand never shown to anyone outside your partner.",
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "AccountSuspend",
+        "type": "object"
+      },
+      "AccountUpdate": {
+        "additionalProperties": false,
+        "description": "Merge: an absent field is unchanged; ``display_name: null`` goes back to the ref.",
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "limits": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limits"
+          }
+        },
+        "title": "AccountUpdate",
+        "type": "object"
+      },
+      "AccountWithUsageOut": {
+        "properties": {
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "external_ref": {
+            "title": "External Ref",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/Limits"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "account",
+            "default": "account",
+            "enum": [
+              "account"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "suspended_by": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Suspended By",
+            "type": "array"
+          },
+          "suspended_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspended Reason"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          }
+        },
+        "required": [
+          "id",
+          "external_ref",
+          "display_name",
+          "status",
+          "suspended_by",
+          "livemode",
+          "created",
+          "limits",
+          "usage"
+        ],
+        "title": "AccountWithUsageOut",
+        "type": "object"
+      },
+      "AppLaunch": {
+        "additionalProperties": false,
+        "description": "Open an app installed on the session's device.",
+        "properties": {
+          "activity_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Android: the activity.",
+            "title": "Activity Name"
+          },
+          "launch_params": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A flat JSON object handed to the app when it is opened.",
+            "title": "Launch Params"
+          },
+          "package_name": {
+            "description": "The app's bundle id or package name.",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Package Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "package_name"
+        ],
+        "title": "AppLaunch",
+        "type": "object"
+      },
+      "AppLaunchOut": {
+        "description": "The launch was handed to the device; it is not acknowledged by the device.",
+        "properties": {
+          "object": {
+            "const": "app_launch",
+            "default": "app_launch",
+            "enum": [
+              "app_launch"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "package_name": {
+            "title": "Package Name",
+            "type": "string"
+          },
+          "session": {
+            "title": "Session",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "session",
+          "package_name"
+        ],
+        "title": "AppLaunchOut",
+        "type": "object"
+      },
+      "Caps": {
+        "properties": {
+          "concurrent_builds": {
+            "title": "Concurrent Builds",
+            "type": "integer"
+          },
+          "concurrent_sessions": {
+            "title": "Concurrent Sessions",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "concurrent_sessions",
+          "concurrent_builds"
+        ],
+        "title": "Caps",
+        "type": "object"
+      },
+      "CollabCredentialCreate": {
+        "additionalProperties": false,
+        "description": "Turn collaboration on (a new credential) or off. ``enabled: true`` mints a\ncredential for one browser to watch (``view``) or also use (``control``) the session's\ndevice; earlier credentials can still be used to connect until their ``expires_at``\nunless ``regenerate`` is true, which revokes them all and disconnects\ntheir guests. ``enabled: false`` revokes every credential and disconnects every\nguest.",
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "regenerate": {
+            "default": false,
+            "title": "Regenerate",
+            "type": "boolean"
+          },
+          "role": {
+            "default": "view",
+            "description": "What the guest may do: `view` (watch) or `control` (watch and use the device: touch, keys, text, rotation, device settings, as a person's guest).",
+            "enum": [
+              "view",
+              "control"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "ttl_seconds": {
+            "anyOf": [
+              {
+                "maximum": 86400.0,
+                "minimum": 60.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How long a browser can connect with the credential, clamped to 3600 seconds (also the default): `expires_at` states the real one.",
+            "title": "Ttl Seconds"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "title": "CollabCredentialCreate",
+        "type": "object"
+      },
+      "CollabCredentialOut": {
+        "description": "A collab credential for one session: give ``url`` (the guest page) or ``token`` to\nONE browser, which watches (or, with ``control``, uses) the session. A browser can\nconnect with this credential until ``expires_at`` (at most 3600 seconds after it is\nminted). A guest that is already connected stays connected until the session ends or\nyou replace or disable the credential (``regenerate`` / ``enabled: false``), which\ndisconnects every guest. Shown once: an ``Idempotency-Key`` replay is 409\n``already_created``. With collaboration turned off, ``token``, ``url``, ``expires_at``\nand ``role`` are null.",
+        "properties": {
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Unix seconds, at most 3600 seconds after the credential is minted. After `expires_at` a browser cannot connect with this credential. A guest that is already connected stays connected until the session ends or you replace or disable the credential; if its video drops after `expires_at`, the video may not come back.",
+            "title": "Expires At"
+          },
+          "object": {
+            "const": "collab_credential",
+            "default": "collab_credential",
+            "enum": [
+              "collab_credential"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "enum": [
+                  "view",
+                  "control"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "session": {
+            "title": "Session",
+            "type": "string"
+          },
+          "token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The credential. Give it to one browser and keep it out of logs.",
+            "title": "Token"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The guest page for this credential.",
+            "title": "Url"
+          }
+        },
+        "required": [
+          "object",
+          "session",
+          "token",
+          "url",
+          "expires_at",
+          "role"
+        ],
+        "title": "CollabCredentialOut",
+        "type": "object"
+      },
+      "CollabStatusOut": {
+        "description": "Whether collaboration is on for the session, how many guests are connected now,\nand how many may be at once (the account's ``collab_guests_per_session``).",
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "guest_count": {
+            "title": "Guest Count",
+            "type": "integer"
+          },
+          "max_guests": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "const": "unlimited",
+                "enum": [
+                  "unlimited"
+                ],
+                "type": "string"
+              }
+            ],
+            "title": "Max Guests"
+          },
+          "object": {
+            "const": "collab_status",
+            "default": "collab_status",
+            "enum": [
+              "collab_status"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "session": {
+            "title": "Session",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "session",
+          "enabled",
+          "guest_count",
+          "max_guests"
+        ],
+        "title": "CollabStatusOut",
+        "type": "object"
+      },
+      "ContractOut": {
+        "properties": {
+          "account_defaults": {
+            "$ref": "#/components/schemas/Limits"
+          },
+          "account_maxima": {
+            "$ref": "#/components/schemas/Limits"
+          },
+          "api_version": {
+            "title": "Api Version",
+            "type": "string"
+          },
+          "build_retention_days": {
+            "title": "Build Retention Days",
+            "type": "integer"
+          },
+          "build_time_limit_s": {
+            "title": "Build Time Limit S",
+            "type": "integer"
+          },
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "caps": {
+            "$ref": "#/components/schemas/Caps"
+          },
+          "embed_domains": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "const": "unlimited",
+                "enum": [
+                  "unlimited"
+                ],
+                "type": "string"
+              }
+            ],
+            "title": "Embed Domains"
+          },
+          "environment": {
+            "enum": [
+              "live",
+              "test"
+            ],
+            "title": "Environment",
+            "type": "string"
+          },
+          "max_accounts": {
+            "title": "Max Accounts",
+            "type": "integer"
+          },
+          "object": {
+            "const": "contract",
+            "default": "contract",
+            "enum": [
+              "contract"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "partner": {
+            "title": "Partner",
+            "type": "string"
+          },
+          "prices": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Unit price per billing unit, in whole micro-USD (1,000,000 = $1.00). Keys: `streaming_minute` (per minute of streaming), `build_minute` (per metered build minute), `build_minute_over_limit` (an extra charge per build minute past an account's monthly limit, on top of `build_minute`), `storage_gb_month` (per GB-month: the daily peak storage averaged over the month, 1 GB = 10^9 bytes). Only the keys your contract sets appear; new keys may be added.",
+            "title": "Prices",
+            "type": "object"
+          },
+          "queue_priority": {
+            "title": "Queue Priority",
+            "type": "string"
+          },
+          "rate_limits": {
+            "$ref": "#/components/schemas/RateLimits"
+          },
+          "usage_thresholds": {
+            "additionalProperties": {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "description": "Monthly usage lines across all your accounts, each list ascending. Units: `streaming_seconds`, `build_minutes`, `build_minutes_over_limit`. Only the units your contract sets appear; new units may be added.",
+            "title": "Usage Thresholds",
+            "type": "object"
+          }
+        },
+        "required": [
+          "partner",
+          "environment",
+          "api_version",
+          "capabilities",
+          "account_defaults",
+          "account_maxima",
+          "caps",
+          "max_accounts",
+          "build_retention_days",
+          "build_time_limit_s",
+          "queue_priority",
+          "embed_domains",
+          "rate_limits",
+          "prices",
+          "usage_thresholds"
+        ],
+        "title": "ContractOut",
+        "type": "object"
+      },
+      "Deletion": {
+        "description": "A DELETE's answer: the deletion is accepted (irreversible) and scheduled;\n``account.deleted`` follows once the account is torn down.",
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "boolean"
+          },
+          "scheduled": {
+            "title": "Scheduled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "accepted",
+          "scheduled"
+        ],
+        "title": "Deletion",
+        "type": "object"
+      },
+      "DeviceList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/DeviceOut"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "list",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "data",
+          "has_more"
+        ],
+        "title": "DeviceList",
+        "type": "object"
+      },
+      "DeviceOut": {
+        "description": "A device offering a session can be started on: one per (type, category, model,\nOS version), the four fields that name it. ``available``: a device of it can be\nstarted now (VibeView's capacity as a whole, not your account's limits).",
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "category": {
+            "description": "`phone`, `tablet` or `tv` (an open set). Use it exactly as returned.",
+            "title": "Category",
+            "type": "string"
+          },
+          "model": {
+            "description": "The device model's name, an opaque label. Use it exactly as returned.",
+            "title": "Model",
+            "type": "string"
+          },
+          "object": {
+            "const": "device",
+            "default": "device",
+            "enum": [
+              "device"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "os_version": {
+            "description": "The OS label (the OS's name and version; its shape differs by platform), opaque. Use it exactly as returned.",
+            "title": "Os Version",
+            "type": "string"
+          },
+          "type": {
+            "description": "The platform (`ios`, `android`; an open set). Use it exactly as returned.",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "type",
+          "category",
+          "model",
+          "os_version",
+          "available"
+        ],
+        "title": "DeviceOut",
+        "type": "object"
+      },
+      "Error": {
+        "additionalProperties": true,
+        "description": "The error object. `code` is stable (an open set: new codes may be added); `field` names the offending member by its JSON path (`allowed_ips[0]`) when there is one; a code may add its own fields (`required_scope`, `reason`, `max`, `id`). `x-vibeview-error-codes` lists the codes known today, each with its HTTP status (null when it is sent with more than one) and its meaning.",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "request_id": {
+            "example": "req_000000000000000000000000",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "request_id"
+        ],
+        "title": "Error",
+        "type": "object",
+        "x-vibeview-error-codes": [
+          {
+            "code": "access_token_not_found",
+            "meaning": "No live access token of this account has that id.",
+            "status": 404
+          },
+          {
+            "code": "account_deleting",
+            "meaning": "This account is being deleted.",
+            "status": 403
+          },
+          {
+            "code": "account_not_found",
+            "meaning": "No account of yours has that id, or the credential cannot act in it.",
+            "status": 404
+          },
+          {
+            "code": "account_required",
+            "meaning": "A partner key names the account it acts in with `VibeView-Account`.",
+            "status": 400
+          },
+          {
+            "code": "account_suspended_by_partner",
+            "meaning": "You suspended this account; resume it to use it.",
+            "status": 403
+          },
+          {
+            "code": "already_created",
+            "meaning": "This `Idempotency-Key` already created the object named by `id`; its secret is never shown again.",
+            "status": 409
+          },
+          {
+            "code": "app_not_found",
+            "meaning": "No app of this account has that id.",
+            "status": 404
+          },
+          {
+            "code": "busy",
+            "meaning": "Another request holds what this one needs; retry after `Retry-After`.",
+            "status": 503
+          },
+          {
+            "code": "capability_disabled",
+            "meaning": "The scope's capability is not part of your contract.",
+            "status": 403
+          },
+          {
+            "code": "concurrent_sessions_limit",
+            "meaning": "The account is using as many devices at once as its limit allows.",
+            "status": 403
+          },
+          {
+            "code": "device_unavailable",
+            "meaning": "No device of this offering is in service right now; retry later.",
+            "status": 409
+          },
+          {
+            "code": "device_unreachable",
+            "meaning": "The session's device gave no answer in time, or could not be reached: the input may or may not have acted. Read the session before you retry, after Retry-After.",
+            "status": 503
+          },
+          {
+            "code": "event_not_found",
+            "meaning": "No event of yours from the last 30 days has that id.",
+            "status": 404
+          },
+          {
+            "code": "external_ref_taken",
+            "meaning": "A live account of yours already has this `external_ref`; `account` names it.",
+            "status": 409
+          },
+          {
+            "code": "idempotency_in_progress",
+            "meaning": "A request with this `Idempotency-Key` is still running; retry after `Retry-After`.",
+            "status": 409
+          },
+          {
+            "code": "idempotency_key_reused",
+            "meaning": "This `Idempotency-Key` was used with a different request; use a new key.",
+            "status": 422
+          },
+          {
+            "code": "insufficient_scope",
+            "meaning": "The credential lacks the scope named in `required_scope`.",
+            "status": 403
+          },
+          {
+            "code": "internal_error",
+            "meaning": "An unexpected error on our side; quote `request_id` to support.",
+            "status": 500
+          },
+          {
+            "code": "invalid_idempotency_key",
+            "meaning": "`Idempotency-Key` must be 1 to 255 visible ASCII characters, sent once.",
+            "status": 400
+          },
+          {
+            "code": "invalid_limit",
+            "meaning": "The limit in `field` is not a whole number at or above its floor, or `unlimited` where the unit has none.",
+            "status": 422
+          },
+          {
+            "code": "invalid_request",
+            "meaning": "The request failed validation; `field`, when there is a member to name, names the first offending one.",
+            "status": 422
+          },
+          {
+            "code": "ip_not_allowed",
+            "meaning": "The key is limited to IP ranges that do not include this request's address.",
+            "status": 403
+          },
+          {
+            "code": "limit_above_contract",
+            "meaning": "The limit in `field` is above your contract's maximum, given in `max`.",
+            "status": 422
+          },
+          {
+            "code": "max_accounts_reached",
+            "meaning": "You have as many live accounts as your contract's `max_accounts`.",
+            "status": 409
+          },
+          {
+            "code": "method_not_allowed",
+            "meaning": "The path does not take this method; `Allow` lists the ones it takes.",
+            "status": 405
+          },
+          {
+            "code": "not_found",
+            "meaning": "The path or the resource does not exist, or the credential cannot see it.",
+            "status": 404
+          },
+          {
+            "code": "not_retryable",
+            "meaning": "The delivery cannot be retried now; `reason` says why (`pending`, `endpoint_disabled`).",
+            "status": 409
+          },
+          {
+            "code": "organization_header_not_allowed",
+            "meaning": "A partner credential names an account with `VibeView-Account`, never `VibeView-Organization`.",
+            "status": 400
+          },
+          {
+            "code": "organization_suspended",
+            "meaning": "The organization or account is suspended.",
+            "status": 403
+          },
+          {
+            "code": "partner_concurrent_sessions_limit",
+            "meaning": "Your accounts together are using as many devices at once as your contract allows.",
+            "status": 403
+          },
+          {
+            "code": "partner_not_active",
+            "meaning": "The partner is suspended, terminating or terminated: it cannot do this now.",
+            "status": 409
+          },
+          {
+            "code": "partner_terminating",
+            "meaning": "This partner is being closed; only reads, revocations and account deletions are possible.",
+            "status": 409
+          },
+          {
+            "code": "partner_unavailable",
+            "meaning": "The account cannot be used now.",
+            "status": 403
+          },
+          {
+            "code": "queue_full",
+            "meaning": "As many of the account's sessions wait for a device as it may run at once; retry after Retry-After.",
+            "status": 429
+          },
+          {
+            "code": "rate_limited",
+            "meaning": "Too many requests; wait for `Retry-After` seconds, then retry with jitter.",
+            "status": 429
+          },
+          {
+            "code": "session_ended",
+            "meaning": "This session has ended.",
+            "status": 409
+          },
+          {
+            "code": "session_not_active",
+            "meaning": "The session is not active: it is waiting for a device, starting or stopping. Read it and retry once it is active.",
+            "status": 409
+          },
+          {
+            "code": "session_not_found",
+            "meaning": "No session of this account has that id.",
+            "status": 404
+          },
+          {
+            "code": "streaming_minutes_exhausted",
+            "meaning": "The account has no streaming minutes left for this period.",
+            "status": 403
+          },
+          {
+            "code": "tool_refused",
+            "meaning": "The agent tool is not one this session may run (422), or this session's device cannot run agent tools (409).",
+            "status": null
+          },
+          {
+            "code": "unauthenticated",
+            "meaning": "No valid credential was sent, or it is expired or revoked.",
+            "status": 401
+          },
+          {
+            "code": "unknown_limit",
+            "meaning": "`field` names a limit an account does not have.",
+            "status": 422
+          },
+          {
+            "code": "unspecified",
+            "meaning": "An error without a specific code yet, on any 4xx or 5xx status; read `message`.",
+            "status": null
+          },
+          {
+            "code": "usage_record_not_found",
+            "meaning": "No usage record you can read has that id.",
+            "status": 404
+          },
+          {
+            "code": "webhook_delivery_not_found",
+            "meaning": "No delivery of yours from the last 30 days has that id.",
+            "status": 404
+          },
+          {
+            "code": "webhook_endpoint_disabled",
+            "meaning": "The endpoint is disabled; enable it on the Partner page first, or contact support if VibeView disabled it.",
+            "status": 409
+          },
+          {
+            "code": "webhook_endpoint_not_found",
+            "meaning": "No webhook endpoint of yours has that id.",
+            "status": 404
+          }
+        ]
+      },
+      "ErrorResponse": {
+        "properties": {
+          "detail": {
+            "description": "A human sentence; read `error` instead."
+          },
+          "error": {
+            "$ref": "#/components/schemas/Error"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse",
+        "type": "object"
+      },
+      "EventAccount": {
+        "properties": {
+          "external_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Ref"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "external_ref"
+        ],
+        "title": "EventAccount",
+        "type": "object"
+      },
+      "EventCutoff": {
+        "description": "The cutoff a ``session.cutoff_warning`` is about: ``reason``, the end reason the\nsession will end with (as ``end_reason`` names it), and ``ends_at``, when (unix\nseconds).",
+        "properties": {
+          "ends_at": {
+            "title": "Ends At",
+            "type": "integer"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason",
+          "ends_at"
+        ],
+        "title": "EventCutoff",
+        "type": "object"
+      },
+      "EventData": {
+        "description": "``object``, and for some event types a member beside it: ``cutoff`` on\n``session.cutoff_warning`` only (absent from every other event).",
+        "properties": {
+          "cutoff": {
+            "$ref": "#/components/schemas/EventCutoff",
+            "title": "Cutoff"
+          },
+          "object": {
+            "title": "Object",
+            "type": "object"
+          }
+        },
+        "required": [
+          "object"
+        ],
+        "title": "EventData",
+        "type": "object"
+      },
+      "EventList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/EventOut"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "list",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "has_more"
+        ],
+        "title": "EventList",
+        "type": "object"
+      },
+      "EventOut": {
+        "additionalProperties": true,
+        "description": "An event as its webhook delivered it (``id``, ``type``, ``created``,\n``api_version``, ``partner``, ``account``, ``data``), plus ``object`` and\n``livemode``. Kept 30 days. A field the envelope gains later is passed through. Every event type is listed in `x-vibeview-event-types`; a type with `sent: false` is not sent yet. New types may be added.",
+        "properties": {
+          "account": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EventAccount"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "api_version": {
+            "title": "Api Version",
+            "type": "string"
+          },
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/EventData"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "event",
+            "default": "event",
+            "enum": [
+              "event"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "partner": {
+            "title": "Partner",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "created",
+          "api_version",
+          "partner",
+          "account",
+          "data",
+          "livemode"
+        ],
+        "title": "EventOut",
+        "type": "object",
+        "x-vibeview-event-types": [
+          {
+            "sent": true,
+            "type": "account.created"
+          },
+          {
+            "sent": true,
+            "type": "account.deleted"
+          },
+          {
+            "sent": true,
+            "type": "account.resumed"
+          },
+          {
+            "sent": true,
+            "type": "account.suspended"
+          },
+          {
+            "sent": true,
+            "type": "account.updated"
+          },
+          {
+            "sent": false,
+            "type": "app.registered"
+          },
+          {
+            "sent": false,
+            "type": "app.uploaded"
+          },
+          {
+            "sent": false,
+            "type": "build.cancelled"
+          },
+          {
+            "sent": false,
+            "type": "build.failed"
+          },
+          {
+            "sent": false,
+            "type": "build.started"
+          },
+          {
+            "sent": false,
+            "type": "build.succeeded"
+          },
+          {
+            "sent": false,
+            "type": "credential.expiring"
+          },
+          {
+            "sent": false,
+            "type": "credential.export_required"
+          },
+          {
+            "sent": true,
+            "type": "limits.changed"
+          },
+          {
+            "sent": true,
+            "type": "partner_key.created"
+          },
+          {
+            "sent": true,
+            "type": "partner_key.expiring"
+          },
+          {
+            "sent": true,
+            "type": "partner_key.revoked"
+          },
+          {
+            "sent": true,
+            "type": "partner_key.updated"
+          },
+          {
+            "sent": false,
+            "type": "retention.expiring"
+          },
+          {
+            "sent": true,
+            "type": "session.created"
+          },
+          {
+            "sent": true,
+            "type": "session.cutoff_warning"
+          },
+          {
+            "sent": true,
+            "type": "session.ended"
+          },
+          {
+            "sent": true,
+            "type": "session.started"
+          },
+          {
+            "sent": false,
+            "type": "signing_material.exported"
+          },
+          {
+            "sent": false,
+            "type": "submission.failed"
+          },
+          {
+            "sent": false,
+            "type": "submission.needs_action"
+          },
+          {
+            "sent": false,
+            "type": "submission.succeeded"
+          },
+          {
+            "sent": true,
+            "type": "usage.threshold"
+          },
+          {
+            "sent": true,
+            "type": "webhook_endpoint.created"
+          },
+          {
+            "sent": true,
+            "type": "webhook_endpoint.deleted"
+          },
+          {
+            "sent": true,
+            "type": "webhook_endpoint.secret_revealed"
+          },
+          {
+            "sent": true,
+            "type": "webhook_endpoint.secret_rotated"
+          },
+          {
+            "sent": true,
+            "type": "webhook_endpoint.updated"
+          }
+        ]
+      },
+      "Limits": {
+        "properties": {
+          "build_minutes_per_month": {
+            "title": "Build Minutes Per Month",
+            "type": "integer"
+          },
+          "collab_guests_per_session": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "const": "unlimited",
+                "enum": [
+                  "unlimited"
+                ],
+                "type": "string"
+              }
+            ],
+            "title": "Collab Guests Per Session"
+          },
+          "concurrent_builds": {
+            "title": "Concurrent Builds",
+            "type": "integer"
+          },
+          "concurrent_sessions": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "const": "unlimited",
+                "enum": [
+                  "unlimited"
+                ],
+                "type": "string"
+              }
+            ],
+            "title": "Concurrent Sessions"
+          },
+          "max_session_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "const": "unlimited",
+                "enum": [
+                  "unlimited"
+                ],
+                "type": "string"
+              }
+            ],
+            "title": "Max Session Minutes"
+          },
+          "storage_bytes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "const": "unlimited",
+                "enum": [
+                  "unlimited"
+                ],
+                "type": "string"
+              }
+            ],
+            "title": "Storage Bytes"
+          },
+          "streaming_minutes_per_month": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "const": "unlimited",
+                "enum": [
+                  "unlimited"
+                ],
+                "type": "string"
+              }
+            ],
+            "title": "Streaming Minutes Per Month"
+          }
+        },
+        "required": [
+          "concurrent_sessions",
+          "max_session_minutes",
+          "streaming_minutes_per_month",
+          "build_minutes_per_month",
+          "concurrent_builds",
+          "storage_bytes",
+          "collab_guests_per_session"
+        ],
+        "title": "Limits",
+        "type": "object"
+      },
+      "PartnerOut": {
+        "description": "The partner a credential belongs to, its environment and, for an access token,\nits account.",
+        "properties": {
+          "account": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The access token's account (`org_...`); `null` for a partner key, which acts in no one account.",
+            "title": "Account"
+          },
+          "environment": {
+            "enum": [
+              "live",
+              "test"
+            ],
+            "title": "Environment",
+            "type": "string"
+          },
+          "id": {
+            "description": "The partner's id (`ptn_...`), for the paths under `/api/v1/partners/{ptn}/`.",
+            "title": "Id",
+            "type": "string"
+          },
+          "livemode": {
+            "description": "`true` for a live partner, `false` for a test partner.",
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "The partner's name, as VibeView set it up with you.",
+            "title": "Name",
+            "type": "string"
+          },
+          "object": {
+            "const": "partner",
+            "default": "partner",
+            "enum": [
+              "partner"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "environment",
+          "livemode",
+          "account"
+        ],
+        "title": "PartnerOut",
+        "type": "object"
+      },
+      "Period": {
+        "properties": {
+          "end": {
+            "title": "End",
+            "type": "integer"
+          },
+          "start": {
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "Period",
+        "type": "object"
+      },
+      "RateLimits": {
+        "properties": {
+          "account_per_minute": {
+            "title": "Account Per Minute",
+            "type": "integer"
+          },
+          "partner_per_minute": {
+            "title": "Partner Per Minute",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "partner_per_minute",
+          "account_per_minute"
+        ],
+        "title": "RateLimits",
+        "type": "object"
+      },
+      "Recover": {
+        "additionalProperties": false,
+        "properties": {
+          "since": {
+            "description": "Unix seconds; at most 30 days back, never before the endpoint existed.",
+            "title": "Since",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "since"
+        ],
+        "title": "Recover",
+        "type": "object"
+      },
+      "SessionControl": {
+        "additionalProperties": false,
+        "description": "One input to the device, as a person's live input. Coordinates are in the\ndevice's screen pixels as the session's screenshots show them.",
+        "properties": {
+          "action": {
+            "description": "The input: tap, swipe, rotate, shake, button, key, touch_*.",
+            "enum": [
+              "tap",
+              "swipe",
+              "rotate",
+              "shake",
+              "button",
+              "key",
+              "touch_start",
+              "touch_move",
+              "touch_end"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "button": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "iOS: HOME, LOCK, SIRI.",
+            "title": "Button"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "maximum": 60000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Milliseconds.",
+            "title": "Duration"
+          },
+          "keycode": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Android: BACK, HOME, MENU, DPAD_UP and so on.",
+            "title": "Keycode"
+          },
+          "rotation": {
+            "anyOf": [
+              {
+                "maximum": 360.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Degrees: 0, 90, 180 or 270.",
+            "title": "Rotation"
+          },
+          "x": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "X"
+          },
+          "x2": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A swipe's end.",
+            "title": "X2"
+          },
+          "y": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Y"
+          },
+          "y2": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A swipe's end.",
+            "title": "Y2"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "SessionControl",
+        "type": "object"
+      },
+      "SessionControlOut": {
+        "description": "The input was handed to the device. It is not acknowledged by the device: read the\nscreen (the agent tools) to see its effect.",
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "object": {
+            "const": "session_control",
+            "default": "session_control",
+            "enum": [
+              "session_control"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "session": {
+            "title": "Session",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "session",
+          "action"
+        ],
+        "title": "SessionControlOut",
+        "type": "object"
+      },
+      "SessionCreate": {
+        "additionalProperties": false,
+        "description": "A new session in the account. Name the device offering with the four fields\nexactly as `GET /devices/pools` lists it; optionally name an app of the account to\ninstall and open, with launch parameters for it. Any other member is refused.",
+        "properties": {
+          "app": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "An app of the account (`app_...`) to install and open.",
+            "title": "App"
+          },
+          "device_category": {
+            "description": "`phone`, `tablet` or `tv` (an open set). Use it exactly as returned.",
+            "maxLength": 20,
+            "title": "Device Category",
+            "type": "string"
+          },
+          "device_type": {
+            "description": "The device's platform: `ios` or `android`, as `GET /devices/pools` lists it.",
+            "enum": [
+              "ios",
+              "android"
+            ],
+            "title": "Device Type",
+            "type": "string"
+          },
+          "launch_params": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A flat JSON object handed to the app when it is opened (only with `app`).",
+            "title": "Launch Params"
+          },
+          "model": {
+            "description": "The device model's name, an opaque label. Use it exactly as returned.",
+            "maxLength": 100,
+            "title": "Model",
+            "type": "string"
+          },
+          "os_version": {
+            "description": "The OS label (the OS's name and version; its shape differs by platform), opaque. Use it exactly as returned.",
+            "maxLength": 100,
+            "title": "Os Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "device_type",
+          "device_category",
+          "model",
+          "os_version"
+        ],
+        "title": "SessionCreate",
+        "type": "object"
+      },
+      "SessionDevice": {
+        "description": "What a session runs on, as an offering (never an instance): the four fields\nof a ``DeviceOut``. A session waiting for any phone or tablet has no category or\nmodel yet (null).",
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "`phone`, `tablet` or `tv` (an open set). Use it exactly as returned.",
+            "title": "Category"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The device model's name, an opaque label. Use it exactly as returned.",
+            "title": "Model"
+          },
+          "os_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The OS label (the OS's name and version; its shape differs by platform), opaque. Use it exactly as returned.",
+            "title": "Os Version"
+          },
+          "type": {
+            "description": "The platform (`ios`, `android`; an open set). Use it exactly as returned.",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "category",
+          "model",
+          "os_version"
+        ],
+        "title": "SessionDevice",
+        "type": "object"
+      },
+      "SessionList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/SessionOut"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "list",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "data",
+          "has_more"
+        ],
+        "title": "SessionList",
+        "type": "object"
+      },
+      "SessionOut": {
+        "description": "A session of the account. ``status`` and ``end_reason`` are open sets (new\nvalues may appear): ``status`` is one of pending, starting, active, stopping,\nstopped, failed today. ``created``, ``started``, ``ended`` are unix seconds.",
+        "properties": {
+          "account": {
+            "title": "Account",
+            "type": "string"
+          },
+          "app": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App"
+          },
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "device": {
+            "$ref": "#/components/schemas/SessionDevice"
+          },
+          "end_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Reason"
+          },
+          "ended": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "session",
+            "default": "session",
+            "enum": [
+              "session"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "queue": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SessionQueueOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "started": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/SessionWarning"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "object",
+          "id",
+          "account",
+          "status",
+          "device",
+          "app",
+          "queue",
+          "created",
+          "started",
+          "ended",
+          "end_reason",
+          "warnings",
+          "livemode"
+        ],
+        "title": "SessionOut",
+        "type": "object"
+      },
+      "SessionPresenceOut": {
+        "description": "The session is held by your credential until ``expires_at`` (unix seconds): call\nagain before it. ``idle_ends_at`` (unix seconds, null while the session is not\nactive): if no input or driving tool call arrives before it, the session ends for\ninactivity, not before this time (then, or up to a minute and a half later).",
+        "properties": {
+          "expires_at": {
+            "title": "Expires At",
+            "type": "integer"
+          },
+          "idle_ends_at": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idle Ends At"
+          },
+          "object": {
+            "const": "session_presence",
+            "default": "session_presence",
+            "enum": [
+              "session_presence"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "session": {
+            "title": "Session",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "session",
+          "expires_at",
+          "idle_ends_at"
+        ],
+        "title": "SessionPresenceOut",
+        "type": "object"
+      },
+      "SessionQueueOut": {
+        "description": "A session waiting for a device: its 1-based ``position`` among the waiters for\nthe same offering, and why it waits (``reason``, an open set, null when unknown:\n``account_limit`` the account's concurrent sessions are in use, ``partner_limit``\nyour accounts together use every session you may run at once, ``devices_busy``\nevery matching device is in use, ``devices_updating`` the matching devices are\nbeing updated or a free one is being prepared).",
+        "properties": {
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "position",
+          "reason"
+        ],
+        "title": "SessionQueueOut",
+        "type": "object"
+      },
+      "SessionStatus": {
+        "enum": [
+          "pending",
+          "starting",
+          "active",
+          "stopping",
+          "stopped",
+          "failed"
+        ],
+        "title": "SessionStatus",
+        "type": "string"
+      },
+      "SessionWarning": {
+        "description": "Something about the session to act on: ``code`` (an open set: new codes may\nappear) and a fixed sentence for it.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "SessionWarning",
+        "type": "object"
+      },
+      "TokenCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Scopes",
+            "type": "array"
+          },
+          "ttl_seconds": {
+            "default": 3600,
+            "maximum": 14400.0,
+            "minimum": 60.0,
+            "title": "Ttl Seconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "scopes"
+        ],
+        "title": "TokenCreate",
+        "type": "object"
+      },
+      "ToolCall": {
+        "additionalProperties": false,
+        "description": "One agent tool call: the tool's name and its arguments.",
+        "properties": {
+          "args": {
+            "description": "The tool's own arguments.",
+            "title": "Args",
+            "type": "object"
+          },
+          "tool": {
+            "description": "One of the tools listed in the operation.",
+            "maxLength": 64,
+            "title": "Tool",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tool"
+        ],
+        "title": "ToolCall",
+        "type": "object"
+      },
+      "ToolIdleWarning": {
+        "description": "The session is close to its inactivity end (set only on reading tools).",
+        "properties": {
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "seconds_remaining": {
+            "title": "Seconds Remaining",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "seconds_remaining",
+          "reason"
+        ],
+        "title": "ToolIdleWarning",
+        "type": "object"
+      },
+      "ToolObservation": {
+        "description": "What the screen showed after the tool ran: ``kind`` ``full`` (the whole tree),\n``diff`` (what changed), ``unchanged`` or ``unavailable`` (it could not be read).",
+        "properties": {
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "text"
+        ],
+        "title": "ToolObservation",
+        "type": "object"
+      },
+      "ToolResultOut": {
+        "description": "A tool call that reached the device, as the tool layer answers it.\n\n``ok`` is false when the tool refused (``result.status`` ``error``, the reason in\n``result.message``), ran but missed (``result.status`` ``warning``, the reason in\n``result.warning``: a tap, long press, drag or alert that did not land, a\n``scroll_until_visible`` that never found its text), or typed into a field that does\nnot hold the text afterwards (``type_text`` / ``clear_text``: ``result.verified``\nfalse, with a ``warning``; ``verified`` null means it could not be checked and is\nstill ``ok``). ``find_element`` finding nothing is ``ok`` true with\n``result.found`` false and a ``message``. ``logs`` is ``ok`` false with a\n``message`` when the app's log is not available.\n\n``result`` is the tool's own answer: for ``screenshot`` a string, an inline data URL\n(``data:image/png;base64,...``), or with ``args.preview: true`` an object\n``{image, preview: {data_url, mime_type, width, height, bytes}}``; null for\n``ui_tree``; an object for every other tool. ``observation`` is the screen after the\ntool (``kind`` ``full``, ``diff``, ``unchanged`` or ``unavailable``, and ``text``),\nnull for ``screenshot`` and ``logs``. ``idle_warning`` is null unless a reading tool\nran close to the inactivity end. A device that gave no answer is never a result: it is\n503 ``device_unreachable``.\n\n``reason`` (null unless ``ok`` is false because the device refused the tool's action):\n``element_not_visible`` (the element is not visible or is covered), ``gesture_failed``\n(a scroll, drag or long press could not be completed), ``alert_failed`` (no alert could\nbe answered), ``no_app_launched`` (no app is in the foreground), ``link_not_opened``\n(the app did not open the link), ``action_failed`` (any other refusal). Its sentence\nis in the result's text.",
+        "properties": {
+          "idle_warning": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToolIdleWarning"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object": {
+            "const": "tool_result",
+            "default": "tool_result",
+            "enum": [
+              "tool_result"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToolObservation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "element_not_visible",
+                  "gesture_failed",
+                  "alert_failed",
+                  "no_app_launched",
+                  "link_not_opened",
+                  "action_failed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "result": {
+            "title": "Result"
+          },
+          "tool": {
+            "title": "Tool",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "tool",
+          "ok",
+          "result",
+          "observation",
+          "idle_warning",
+          "reason"
+        ],
+        "title": "ToolResultOut",
+        "type": "object"
+      },
+      "Usage": {
+        "description": "The calendar month (UTC) so far. Whole numbers only: ``streaming_seconds``\n(sessions, live ones included, rounded down), ``build_minutes`` (every metered\nminute of the month's finished builds, within the limit or past it, each build\nrounded up to whole minutes as it is metered), ``storage_bytes`` (stored now).",
+        "properties": {
+          "build_minutes": {
+            "title": "Build Minutes",
+            "type": "integer"
+          },
+          "period": {
+            "$ref": "#/components/schemas/Period"
+          },
+          "storage_bytes": {
+            "title": "Storage Bytes",
+            "type": "integer"
+          },
+          "streaming_seconds": {
+            "title": "Streaming Seconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "period",
+          "streaming_seconds",
+          "build_minutes",
+          "storage_bytes"
+        ],
+        "title": "Usage",
+        "type": "object"
+      },
+      "UsageCurrentPeriod": {
+        "description": "The account's calendar month (UTC) so far, computed at `as_of` (unix seconds).",
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "integer"
+          },
+          "build_minutes": {
+            "title": "Build Minutes",
+            "type": "integer"
+          },
+          "period": {
+            "$ref": "#/components/schemas/Period"
+          },
+          "storage_bytes": {
+            "title": "Storage Bytes",
+            "type": "integer"
+          },
+          "streaming_seconds": {
+            "title": "Streaming Seconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "period",
+          "streaming_seconds",
+          "build_minutes",
+          "storage_bytes",
+          "as_of"
+        ],
+        "title": "UsageCurrentPeriod",
+        "type": "object"
+      },
+      "UsageList": {
+        "description": "A page of usage records, ordered by day, account, unit. `current_period` is set\nwhen the page is one account's and `to` is today or later; null otherwise.",
+        "properties": {
+          "current_period": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UsageCurrentPeriod"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/UsageRecord"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "list",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "has_more",
+          "current_period"
+        ],
+        "title": "UsageList",
+        "type": "object"
+      },
+      "UsagePrice": {
+        "description": "The unit price of the contract in force at the end of the record's day, for the\nunit's price key (`streaming_minute`, `build_minute`, `build_minute_over_limit`,\n`storage_gb_month`), in whole micro-dollars (1,000,000 = $1.00). Never an amount: a\nmonth's amount is computed from the month's records and their prices.",
+        "properties": {
+          "currency": {
+            "const": "usd",
+            "default": "usd",
+            "enum": [
+              "usd"
+            ],
+            "title": "Currency",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "unit_amount_micro": {
+            "title": "Unit Amount Micro",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "unit_amount_micro"
+        ],
+        "title": "UsagePrice",
+        "type": "object"
+      },
+      "UsageRecord": {
+        "description": "What one account used on one UTC day, in one usage unit. `final` false: the day\ncan still change; true: it never changes again.",
+        "properties": {
+          "account": {
+            "title": "Account",
+            "type": "string"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "final": {
+            "title": "Final",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "object": {
+            "const": "usage_record",
+            "default": "usage_record",
+            "enum": [
+              "usage_record"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UsagePrice"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "integer"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "day",
+          "account",
+          "unit",
+          "quantity",
+          "final",
+          "price"
+        ],
+        "title": "UsageRecord",
+        "type": "object"
+      },
+      "WebhookDeliveryAttemptOut": {
+        "description": "``response_snippet`` (the start of your endpoint's answer) is shown to partner\nadmins in the dashboard only, never to a key.",
+        "properties": {
+          "attempt": {
+            "title": "Attempt",
+            "type": "integer"
+          },
+          "duration_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Ms"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "response_snippet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response Snippet"
+          },
+          "started": {
+            "title": "Started",
+            "type": "integer"
+          },
+          "status_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Code"
+          },
+          "trigger": {
+            "title": "Trigger",
+            "type": "string"
+          }
+        },
+        "required": [
+          "attempt",
+          "trigger",
+          "started",
+          "duration_ms",
+          "status_code",
+          "error"
+        ],
+        "title": "WebhookDeliveryAttemptOut",
+        "type": "object"
+      },
+      "WebhookDeliveryDetailOut": {
+        "properties": {
+          "attempt_count": {
+            "title": "Attempt Count",
+            "type": "integer"
+          },
+          "attempts": {
+            "items": {
+              "$ref": "#/components/schemas/WebhookDeliveryAttemptOut"
+            },
+            "title": "Attempts",
+            "type": "array"
+          },
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "endpoint": {
+            "title": "Endpoint",
+            "type": "string"
+          },
+          "event": {
+            "title": "Event",
+            "type": "string"
+          },
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "failed_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failed Reason"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "last_attempt_at": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Attempt At"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "last_status_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Status Code"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "next_attempt_at": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Attempt At"
+          },
+          "object": {
+            "const": "webhook_delivery",
+            "default": "webhook_delivery",
+            "enum": [
+              "webhook_delivery"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "event",
+          "event_type",
+          "endpoint",
+          "status",
+          "attempt_count",
+          "next_attempt_at",
+          "last_attempt_at",
+          "last_status_code",
+          "last_error",
+          "failed_reason",
+          "livemode",
+          "created",
+          "attempts"
+        ],
+        "title": "WebhookDeliveryDetailOut",
+        "type": "object"
+      },
+      "WebhookDeliveryList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/WebhookDeliveryOut"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "list",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "has_more"
+        ],
+        "title": "WebhookDeliveryList",
+        "type": "object"
+      },
+      "WebhookDeliveryOut": {
+        "description": "One event sent to one endpoint. ``status``: ``pending``, ``succeeded`` or\n``failed`` (an open set); ``next_attempt_at`` only while pending.",
+        "properties": {
+          "attempt_count": {
+            "title": "Attempt Count",
+            "type": "integer"
+          },
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "endpoint": {
+            "title": "Endpoint",
+            "type": "string"
+          },
+          "event": {
+            "title": "Event",
+            "type": "string"
+          },
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "failed_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failed Reason"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "last_attempt_at": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Attempt At"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "last_status_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Status Code"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "next_attempt_at": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Attempt At"
+          },
+          "object": {
+            "const": "webhook_delivery",
+            "default": "webhook_delivery",
+            "enum": [
+              "webhook_delivery"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "event",
+          "event_type",
+          "endpoint",
+          "status",
+          "attempt_count",
+          "next_attempt_at",
+          "last_attempt_at",
+          "last_status_code",
+          "last_error",
+          "failed_reason",
+          "livemode",
+          "created"
+        ],
+        "title": "WebhookDeliveryOut",
+        "type": "object"
+      },
+      "WebhookEndpointList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/WebhookEndpointOut"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "list",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "has_more"
+        ],
+        "title": "WebhookEndpointList",
+        "type": "object"
+      },
+      "WebhookEndpointOut": {
+        "description": "``status``: ``enabled`` or ``disabled`` (an open set); ``disabled_reason``:\n``failing`` (VibeView stopped it after days of failures), ``partner`` (you) or\n``vibeview`` (only VibeView can resume it), an open set. Never a secret.",
+        "properties": {
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "disabled_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabled Reason"
+          },
+          "enabled_events": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Enabled Events",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "webhook_endpoint",
+            "default": "webhook_endpoint",
+            "enum": [
+              "webhook_endpoint"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "previous_secret_expires_at": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Secret Expires At"
+          },
+          "recovering_since": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recovering Since"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "description",
+          "enabled_events",
+          "status",
+          "disabled_reason",
+          "previous_secret_expires_at",
+          "recovering_since",
+          "livemode",
+          "created"
+        ],
+        "title": "WebhookEndpointOut",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "AccessToken": {
+        "description": "An account access token (`vvat_...`), bound to one account.",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "PartnerKey": {
+        "description": "A partner key (`vvp_live_...` or `vvp_test_...`).",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "The routes a partner key can call. Every error has the same `error` object; `x-required-scope` names the scope each operation needs (an operation without one takes any key of the partner). Changes are additive only.",
+    "title": "VibeView Partner API",
+    "version": "2026-11-09"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/devices/pools": {
+      "get": {
+        "description": "The devices a session can be started on, one per type, category, model and OS version; `available` says whether one can be started now.",
+        "operationId": "list_device_pools",
+        "parameters": [
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "List device offerings",
+        "x-required-scope": "sessions:read"
+      }
+    },
+    "/api/v1/partners/me": {
+      "get": {
+        "description": "The partner this credential belongs to: its id (for the paths under\n`/api/v1/partners/{ptn}/`), name and environment, and, for an access token, its\naccount. Any key of the partner, whatever its scopes, or any access token.",
+        "operationId": "get_current_partner",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Get Current Partner"
+      }
+    },
+    "/api/v1/partners/{ptn}/accounts": {
+      "get": {
+        "description": "Your live accounts, newest first (``limit`` 1 to 100, ``starting_after`` an\naccount id from the previous page), or the one with ``external_ref`` (exact).",
+        "operationId": "list_accounts",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Starting After"
+            }
+          },
+          {
+            "in": "query",
+            "name": "external_ref",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "External Ref"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "List Accounts",
+        "x-required-scope": "accounts:read"
+      },
+      "post": {
+        "description": "Create an account (one organization per customer of yours): no members, no email,\non your contract's limits. 409 ``external_ref_taken`` names the live account that\nholds the ref.",
+        "operationId": "create_account",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 255 visible ASCII characters; a repeat within 24 hours replays the answer.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Create Account",
+        "x-required-scope": "accounts:write"
+      }
+    },
+    "/api/v1/partners/{ptn}/accounts/{org}": {
+      "delete": {
+        "description": "Delete the account (irreversible): 202 with ``status: \"deleting\"`` and\n``deletion``; its access tokens are revoked at once, its work ends, and\n``account.deleted`` follows once it is torn down. 409\n``signing_material_not_exported`` (naming the ``credentials``) while signing\nmaterial VibeView generated for it signed a build and nobody exported it: export it\nfirst, or repeat with ``confirm_signing_material_loss=true``. A repeat while it is\nbeing deleted answers the same 202 (no ``Idempotency-Key`` needed). Allowed while\nyour partner is terminating.",
+        "operationId": "delete_account",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "org_0000000000000000",
+            "in": "path",
+            "name": "org",
+            "required": true,
+            "schema": {
+              "title": "Org",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "confirm_signing_material_loss",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Confirm Signing Material Loss",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDeletionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Delete Account",
+        "x-required-scope": "accounts:write"
+      },
+      "get": {
+        "description": "One account, with its usage this calendar month (UTC).",
+        "operationId": "get_account",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "org_0000000000000000",
+            "in": "path",
+            "name": "org",
+            "required": true,
+            "schema": {
+              "title": "Org",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountWithUsageOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Get Account",
+        "x-required-scope": "accounts:read"
+      },
+      "patch": {
+        "description": "Merge ``display_name`` (``null``: back to the ref) and ``limits`` (only the units\nsent change). The ``external_ref`` never changes.",
+        "operationId": "update_account",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "org_0000000000000000",
+            "in": "path",
+            "name": "org",
+            "required": true,
+            "schema": {
+              "title": "Org",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Update Account",
+        "x-required-scope": "accounts:write"
+      }
+    },
+    "/api/v1/partners/{ptn}/accounts/{org}/resume": {
+      "post": {
+        "description": "Lift your suspension of the account. Its ``status`` stays ``suspended`` while\nanything else suspends it (``suspended_by``: VibeView, or your partner's own\nstate); resuming an account you did not suspend, or one being deleted, changes\nnothing. 409 ``partner_not_active`` while your partner is suspended.",
+        "operationId": "resume_account",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "org_0000000000000000",
+            "in": "path",
+            "name": "org",
+            "required": true,
+            "schema": {
+              "title": "Org",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 255 visible ASCII characters; a repeat within 24 hours replays the answer.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Resume Account",
+        "x-required-scope": "accounts:write"
+      }
+    },
+    "/api/v1/partners/{ptn}/accounts/{org}/suspend": {
+      "post": {
+        "description": "Suspend the account: its access tokens and its people stop at once, its live\nsessions, queued sessions and builds are ended. ``reason`` (optional, at most 200\ncharacters) is your own note: stored with the suspension, never shown to anyone\noutside your partner. Suspending an account that is already suspended, or being\ndeleted, changes nothing. The account's ``status`` follows every suspension that\nholds (``suspended_by``).",
+        "operationId": "suspend_account",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "org_0000000000000000",
+            "in": "path",
+            "name": "org",
+            "required": true,
+            "schema": {
+              "title": "Org",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 255 visible ASCII characters; a repeat within 24 hours replays the answer.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/AccountSuspend"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Suspend Account",
+        "x-required-scope": "accounts:write"
+      }
+    },
+    "/api/v1/partners/{ptn}/accounts/{org}/tokens": {
+      "post": {
+        "description": "A short-lived ``vvat_`` token for one account, with account scopes your key holds\n(``ttl_seconds`` 60 to 14,400, default 3,600). Shown once (``Cache-Control:\nno-store``); a replay is 409 ``already_created`` with its id, never the token.",
+        "operationId": "mint_access_token",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "org_0000000000000000",
+            "in": "path",
+            "name": "org",
+            "required": true,
+            "schema": {
+              "title": "Org",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 255 visible ASCII characters; a repeat within 24 hours is 409 `already_created` with the object's id: the secret is shown only once.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Mint Access Token",
+        "x-required-scope": "tokens:write"
+      }
+    },
+    "/api/v1/partners/{ptn}/accounts/{org}/tokens/{atok}": {
+      "delete": {
+        "description": "Revoke one of the account's live tokens: it stops working at once.",
+        "operationId": "revoke_access_token",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "org_0000000000000000",
+            "in": "path",
+            "name": "org",
+            "required": true,
+            "schema": {
+              "title": "Org",
+              "type": "string"
+            }
+          },
+          {
+            "example": "atok_0000000000000000",
+            "in": "path",
+            "name": "atok",
+            "required": true,
+            "schema": {
+              "title": "Atok",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenRevokedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Revoke Access Token",
+        "x-required-scope": "tokens:write"
+      }
+    },
+    "/api/v1/partners/{ptn}/contract": {
+      "get": {
+        "description": "The partner's current terms: capabilities, account defaults and maxima, caps,\nretention, build time limit, queue priority, embed domains, rate limits, environment\nand API version.",
+        "operationId": "get_contract",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Get Contract"
+      }
+    },
+    "/api/v1/partners/{ptn}/events": {
+      "get": {
+        "description": "Your events of the last 30 days, newest first, as their webhooks carried them;\noptionally of one ``type`` or one ``account`` (a deleted account too: its events stay\nfor those 30 days). A key never sees the key inventory's events (``partner_key.*``):\nonly people may read keys.",
+        "operationId": "list_partner_events",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Starting After"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "account",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "List Partner Events",
+        "x-required-scope": "webhooks:read"
+      }
+    },
+    "/api/v1/partners/{ptn}/usage": {
+      "get": {
+        "description": "What your accounts used, one record per account, UTC day and usage unit, ordered by\nday, account, unit (accounts in a stable order). ``from``/``to`` inclusive (default the\ncurrent month so far; at most 92 days); ``account`` one account, deleted ones included,\nand then ``current_period`` (the month so far, computed now) when ``to`` reaches today.\n``price`` is the unit price of the contract in force at the end of the record's day,\nnever an amount. Read-only.",
+        "operationId": "list_partner_usage",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A UTC day, YYYY-MM-DD, inclusive. Default: the first day of `to`'s month.",
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A UTC day, YYYY-MM-DD, inclusive. Default: the first day of `to`'s month.",
+              "title": "From"
+            }
+          },
+          {
+            "description": "A UTC day, YYYY-MM-DD, inclusive. Default: today. A range covers at most 92 days.",
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A UTC day, YYYY-MM-DD, inclusive. Default: today. A range covers at most 92 days.",
+              "title": "To"
+            }
+          },
+          {
+            "description": "Only this account (`org_...`), deleted ones included.",
+            "in": "query",
+            "name": "account",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only this account (`org_...`), deleted ones included.",
+              "title": "Account"
+            }
+          },
+          {
+            "description": "Only this usage unit: `streaming_seconds`, `build_minutes`, `build_minutes_over_limit` or `storage_bytes`.",
+            "in": "query",
+            "name": "unit",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only this usage unit: `streaming_seconds`, `build_minutes`, `build_minutes_over_limit` or `storage_bytes`.",
+              "title": "Unit"
+            }
+          },
+          {
+            "description": "1 to 100.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "description": "1 to 100.",
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A usage record id from the previous page: the page after it.",
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A usage record id from the previous page: the page after it.",
+              "title": "Starting After"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "List Partner Usage",
+        "x-required-scope": "partner_usage:read"
+      }
+    },
+    "/api/v1/partners/{ptn}/webhook-deliveries": {
+      "get": {
+        "description": "Your deliveries of the last 30 days, newest first; optionally of one\n``endpoint``, one ``event`` or one ``status`` (``pending``, ``succeeded``,\n``failed``).",
+        "operationId": "list_webhook_deliveries",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Starting After"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endpoint",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Endpoint"
+            }
+          },
+          {
+            "in": "query",
+            "name": "event",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Event"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookDeliveryList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "List Webhook Deliveries",
+        "x-required-scope": "webhooks:read"
+      }
+    },
+    "/api/v1/partners/{ptn}/webhook-deliveries/{evd}": {
+      "get": {
+        "description": "One delivery with its attempts. The start of your endpoint's answer\n(``response_snippet``) is shown to partner admins only.",
+        "operationId": "get_webhook_delivery",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "evd_000000000000000000000000",
+            "in": "path",
+            "name": "evd",
+            "required": true,
+            "schema": {
+              "title": "Evd",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookDeliveryDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Get Webhook Delivery",
+        "x-required-scope": "webhooks:read"
+      }
+    },
+    "/api/v1/partners/{ptn}/webhook-deliveries/{evd}/retry": {
+      "post": {
+        "description": "Send an ended delivery once more, now (one attempt). 409 ``not_retryable`` while\nit is still being delivered (``reason: pending``) or its endpoint is disabled\n(``endpoint_disabled``).",
+        "operationId": "retry_webhook_delivery",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "evd_000000000000000000000000",
+            "in": "path",
+            "name": "evd",
+            "required": true,
+            "schema": {
+              "title": "Evd",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 255 visible ASCII characters; a repeat within 24 hours replays the answer.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookDeliveryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Retry Webhook Delivery",
+        "x-required-scope": "webhooks:write"
+      }
+    },
+    "/api/v1/partners/{ptn}/webhook-endpoints": {
+      "get": {
+        "description": "Your webhook endpoints (disabled ones included), newest first. Never a secret.",
+        "operationId": "list_webhook_endpoints",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Starting After"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpointList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "List Webhook Endpoints",
+        "x-required-scope": "webhooks:read"
+      }
+    },
+    "/api/v1/partners/{ptn}/webhook-endpoints/{whe}": {
+      "get": {
+        "description": "One endpoint. Never its secret.",
+        "operationId": "get_webhook_endpoint",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "whe_0000000000000000",
+            "in": "path",
+            "name": "whe",
+            "required": true,
+            "schema": {
+              "title": "Whe",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpointOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Get Webhook Endpoint",
+        "x-required-scope": "webhooks:read"
+      }
+    },
+    "/api/v1/partners/{ptn}/webhook-endpoints/{whe}/recover": {
+      "post": {
+        "description": "Send the endpoint every event since ``since`` again (at most 30 days, never before\nit existed; ``recovering_since`` shows the recovery until it ends). The endpoint\nmust be enabled (409 ``webhook_endpoint_disabled``).",
+        "operationId": "recover_webhook_endpoint",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "example": "whe_0000000000000000",
+            "in": "path",
+            "name": "whe",
+            "required": true,
+            "schema": {
+              "title": "Whe",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 255 visible ASCII characters; a repeat within 24 hours replays the answer.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Recover"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpointOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "Recover Webhook Endpoint",
+        "x-required-scope": "webhooks:write"
+      }
+    },
+    "/api/v1/sessions/": {
+      "get": {
+        "description": "The account's sessions, newest first (by creation). `limit` 1 to 100 (default 10); `starting_after` a session id from the previous page; `status` filters.",
+        "operationId": "list_sessions",
+        "parameters": [
+          {
+            "description": "1 to 100.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "description": "1 to 100.",
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A session id from a previous page: the page after it.",
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A session id from a previous page: the page after it.",
+              "title": "Starting After"
+            }
+          },
+          {
+            "description": "Only sessions in these statuses.",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/components/schemas/SessionStatus"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only sessions in these statuses.",
+              "title": "Status"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "List the account's sessions",
+        "x-required-scope": "sessions:read"
+      },
+      "post": {
+        "description": "Creates a pending session in the account on a device offering: the four fields exactly as `GET /devices/pools` lists them. Optionally names an app of the account to install and open. Start it with `POST /sessions/{session_id}/start`. An offering that exists but has no device in service right now is 409 `device_unavailable` (retry later); anything else that is not an offering is 422 `invalid_request` naming the field. Refused with 403 `concurrent_sessions_limit` when the account uses all the devices it may use at once, `partner_concurrent_sessions_limit` when your accounts together do, and `streaming_minutes_exhausted` when the account has no streaming minutes left.",
+        "operationId": "create_session",
+        "parameters": [
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 255 visible ASCII characters; a repeat within 24 hours replays the answer.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Create a session",
+        "x-required-scope": "sessions:write"
+      }
+    },
+    "/api/v1/sessions/{session_id}": {
+      "delete": {
+        "description": "Ends the session and returns it, ended. A waiting session leaves the queue. Ending a session that has already ended returns it unchanged.",
+        "operationId": "stop_session",
+        "parameters": [
+          {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "End a session",
+        "x-required-scope": "sessions:write"
+      },
+      "get": {
+        "description": "One session of the account; a session of another account is 404 `session_not_found`.",
+        "operationId": "get_session",
+        "parameters": [
+          {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Get a session",
+        "x-required-scope": "sessions:read"
+      }
+    },
+    "/api/v1/sessions/{session_id}/agent/tools": {
+      "post": {
+        "description": "Reads or drives the device of an active session, one tool per call. The tools:\n\n- `ui_tree`: the screen's elements as text, each interactive one with a ref (`@e1`) the other tools take.\n- `screenshot`: the screen as an inline PNG data URL (`args.preview: true` adds a smaller copy).\n- `logs`: the app's recent log lines (`args.since`, `args.tail`).\n- `find_element`: find an element by its text or id.\n- `wait`: wait up to 30 seconds (`args.seconds`).\n- `tap`: tap an element by ref.\n- `tap_coordinates`: tap at screen coordinates.\n- `long_press`: press and hold an element or a point.\n- `swipe`: swipe in a direction or between two points.\n- `scroll_until_visible`: scroll until a text or id is on screen.\n- `gesture_preset`: one of a fixed set of gestures.\n- `drag`: drag from one point to another.\n- `alert`: answer a system alert with one of its buttons.\n- `type_text`: type text into the focused field.\n- `clear_text`: clear the focused field.\n- `press_button`: press a device button (back, home, the TV remote's keys).\n- `open_url`: open a link: iOS refuses web, system and Apple's reserved schemes and opens any other URL in whatever app handles its scheme; Android sends it as a view intent to the session's app only.\n- `set_posture`: fold or unfold a foldable device.\n- `rotate`: rotate the device.\n- `shake`: shake the device.\n- `set_location`: set the device's simulated location.\n- `set_status_bar`: show a clean status bar or the device's real one.\n- `set_app_language`: run the app in another language (the app restarts).\n- `relaunch_app`: close the app and start it again.\n- `tap_focused_tv`: select the focused element (TV).\n- `focus_element_tv`: move the focus to an element (TV).\n\nThe reading tools (`ui_tree`, `screenshot`, `logs`, `find_element`, `wait`) keep the session held but are not use; every other tool is use. A `screenshot` result is an inline data URL (`data:image/png;base64,...`), never a link. A tool that reached the device answers 200 with `ok` (see the result object for what `ok` false means and where its reason is). A tool outside this list is 422 `tool_refused`; bad `args` 422 `invalid_request` (`type_text` at most 10000 characters, `scroll_until_visible` at most 50 scrolls, `wait` at most 30 seconds; the body at most 64 KB). A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, a device that cannot run agent tools 409 `tool_refused`. A device that gave no answer (it did not reply in time, or nothing reached it) is 503 `device_unreachable` with `Retry-After`: the tool may or may not have acted. One tool runs on a session at a time; when 4 more already wait, a call is 429 `rate_limited` (`limit` `session_tools`, `Retry-After`). Not idempotent (no `Idempotency-Key`: a repeated tap is a second tap); read the session before retrying.",
+        "operationId": "run_agent_tool",
+        "parameters": [
+          {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToolCall"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolResultOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Run an agent tool on a session's device",
+        "x-required-scope": "sessions:write"
+      }
+    },
+    "/api/v1/sessions/{session_id}/collab": {
+      "get": {
+        "description": "Whether collaboration is on, the guests connected now, and how many the account allows at once. Never a credential.",
+        "operationId": "get_collab_status",
+        "parameters": [
+          {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollabStatusOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Get a session's collaboration status",
+        "x-required-scope": "sessions:read"
+      },
+      "put": {
+        "description": "Mints a collab credential for one session of the account. Hand `url` (the guest page) or `token` to the browser that should watch (`role` `view`) or also use the device (`control`: touch, keys, text, rotation and device settings, as a person's guest; no command to open a URL or deep link is accepted from a guest): never your key or access token, which must not reach a browser. A browser can connect with it until `expires_at` (at most 3600 seconds after it is minted; `ttl_seconds` is clamped). A guest that is already connected stays connected until the session ends or you replace or disable the credential (`regenerate` / `enabled: false`), which disconnects every guest. Calling it again mints another credential: earlier ones can still be used to connect until their `expires_at`, unless `regenerate` is true, which revokes them and disconnects their guests; `enabled: false` revokes every credential and disconnects every guest. Guests count against the account's `collab_guests_per_session`: a guest over it is refused. A connected guest keeps the session held (no presence calls are needed while one watches); watching is not use, a `control` guest's input is, so a session nobody uses still ends `inactivity_timeout`. An ended session is 409 `session_ended`. The answer is shown once (`Cache-Control: no-store`): a repeat with the same `Idempotency-Key` is 409 `already_created` naming the session; a repeat of `enabled: false` returns its answer again.",
+        "operationId": "update_collab",
+        "parameters": [
+          {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 255 visible ASCII characters; a repeat within 24 hours is 409 `already_created` with the object's id: the secret is shown only once.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollabCredentialCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollabCredentialOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Let a browser watch or use a session",
+        "x-required-scope": "sessions:write"
+      }
+    },
+    "/api/v1/sessions/{session_id}/control": {
+      "post": {
+        "description": "Sends one input (a tap, a swipe, a button or key press, a rotation, a shake, a touch) to the device of an active session, as a person's live input. Any other `action` is 422 `invalid_request`. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`; a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).",
+        "operationId": "control_session",
+        "parameters": [
+          {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionControl"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionControlOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Send input to a session's device",
+        "x-required-scope": "sessions:write"
+      }
+    },
+    "/api/v1/sessions/{session_id}/launch-app": {
+      "post": {
+        "description": "Opens an app installed on the device of an active session, optionally with launch parameters (a flat JSON object; anything else is 422 `invalid_request`). Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`; a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).",
+        "operationId": "launch_app",
+        "parameters": [
+          {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppLaunch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppLaunchOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Open an app on a session's device",
+        "x-required-scope": "sessions:write"
+      }
+    },
+    "/api/v1/sessions/{session_id}/presence": {
+      "post": {
+        "description": "A session driven from your server has no viewer: call this while you use it. Each call holds the session for 60 seconds (`expires_at`); call it every 15 seconds. An active session that nobody holds ends `no_client` about two minutes after it became active, or soon after the hold lapses. Holding is not use: a session with no input for the account's idle timeout still ends `inactivity_timeout`, not before `idle_ends_at` (send input or a driving tool call before it; null until the session is active). A pending or starting session may be held; a waiting session's 30 minutes are not extended by it. A stopping session is 409 `session_not_active`, an ended one 409 `session_ended`.",
+        "operationId": "touch_session_presence",
+        "parameters": [
+          {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionPresenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Keep a session alive",
+        "x-required-scope": "sessions:write"
+      }
+    },
+    "/api/v1/sessions/{session_id}/start": {
+      "post": {
+        "description": "Starts a pending session on a device of its offering. When none is free the session waits: it stays `pending` with `queue` set and starts when a device frees. A waiting session that gets no device within 30 minutes of this call ends: `failed`, with `end_reason` `queue_timeout` (a `session.ended` event is sent). A session already starting, active or waiting is returned as it is; an ended one is 409 `session_ended`. The waiting sessions of one account are capped at the number of devices it may use at once (429 `queue_full`, with `Retry-After`).",
+        "operationId": "start_session",
+        "parameters": [
+          {
+            "example": "00000000-0000-0000-0000-000000000000",
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 255 visible ASCII characters; a repeat within 24 hours replays the answer.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Start a session",
+        "x-required-scope": "sessions:write"
+      }
+    },
+    "/api/v1/usage": {
+      "get": {
+        "description": "What the account used, one record per UTC day and usage unit, from `from` to `to` (inclusive; default the current month so far; at most 92 days), ordered by day, then unit. A day's record can change until it is `final`. `price` is the unit price your contract had at the end of that day, never an amount. When `to` is today or later, `current_period` holds the month so far, computed now. `limit` 1 to 100 (default 10); `starting_after` a record id from the previous page (another id is 404 `usage_record_not_found`). A malformed day, `from` after `to`, a longer range or an unknown `unit` is 422 `invalid_request` naming the parameter.",
+        "operationId": "list_account_usage",
+        "parameters": [
+          {
+            "description": "A UTC day, YYYY-MM-DD, inclusive. Default: the first day of `to`'s month.",
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A UTC day, YYYY-MM-DD, inclusive. Default: the first day of `to`'s month.",
+              "title": "From"
+            }
+          },
+          {
+            "description": "A UTC day, YYYY-MM-DD, inclusive. Default: today. A range covers at most 92 days.",
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A UTC day, YYYY-MM-DD, inclusive. Default: today. A range covers at most 92 days.",
+              "title": "To"
+            }
+          },
+          {
+            "description": "Only this usage unit: `streaming_seconds`, `build_minutes`, `build_minutes_over_limit` or `storage_bytes`.",
+            "in": "query",
+            "name": "unit",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only this usage unit: `streaming_seconds`, `build_minutes`, `build_minutes_over_limit` or `storage_bytes`.",
+              "title": "Unit"
+            }
+          },
+          {
+            "description": "1 to 100.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "description": "1 to 100.",
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "A usage record id from the previous page: the page after it.",
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A usage record id from the previous page: the page after it.",
+              "title": "Starting After"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "List the account's usage",
+        "x-required-scope": "usage:read"
+      }
+    }
+  }
+}

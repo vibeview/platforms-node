@@ -1,0 +1,15 @@
+{
+  "body": {
+    "detail": "Rate limit exceeded: 10 per 1 minute for this partner.",
+    "error": {
+      "code": "rate_limited",
+      "limit": "partner",
+      "message": "Rate limit exceeded: 10 per 1 minute for this partner.",
+      "request_id": "req_a9949423a7f979dafc4d9b2a"
+    }
+  },
+  "headers": {
+    "retry-after": "60"
+  },
+  "status": 429
+}

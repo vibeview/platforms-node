@@ -1,0 +1,86 @@
+{
+  "name": "@vibeview/platforms",
+  "version": "0.1.0",
+  "description": "Server-side TypeScript client for the VibeView Partner API",
+  "keywords": [
+    "vibeview",
+    "partner-api",
+    "platforms",
+    "simulator",
+    "emulator",
+    "api-client"
+  ],
+  "license": "MIT",
+  "author": "VibeView",
+  "homepage": "https://github.com/vibeview/platforms-node#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vibeview/platforms-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vibeview/platforms-node/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
+  "browser": {
+    "./dist/index.js": "./dist/browser.js",
+    "./dist/index.cjs": "./dist/browser.cjs"
+  },
+  "exports": {
+    ".": {
+      "workerd": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "browser": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/browser.js"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./dist/browser.js",
+    "./dist/browser.cjs"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\" && tsup",
+    "generate": "node scripts/generate.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "standardwebhooks": "1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.37",
+    "esbuild": "0.25.12",
+    "openapi-typescript": "7.13.0",
+    "prettier": "3.8.1",
+    "tsup": "8.5.0",
+    "typescript": "5.9.3",
+    "vitest": "4.1.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
