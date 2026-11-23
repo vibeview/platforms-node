@@ -70,9 +70,9 @@ for await (const each of vibeview.accounts.list({ limit: 100 })) {
 
 ## Acting in an account
 
-Calls under `/partners/{ptn}` (accounts, tokens, contract, events, webhook endpoints and
+Calls under `/partners/{ptn}` (accounts, tokens, contract, shares, events, webhook endpoints and
 deliveries, `partnerUsage`) take your partner key. Calls that act in
-one account (`sessions`, `devicePools`, `usage`) need that account: with a partner key, name
+one account (`sessions`, `devicePools`, `apps`, `usage`) need that account: with a partner key, name
 it with `withAccount` (sent as the `VibeView-Account` header); an access token is bound to
 its account already.
 
@@ -82,11 +82,13 @@ import { VibeView } from '@vibeview/platforms';
 const vibeview = new VibeView({ apiKey: process.env.VIBEVIEW_KEY });
 const customer = vibeview.withAccount('org_95aa9b33d49e3752');
 const sessions = await customer.sessions.list({ limit: 10 });
+// The apps the account can start a session on: its own and those you share with your partner.
+const apps = await customer.apps.list();
 
 // Or with an access token minted for the account:
 const scoped = new VibeView({ accessToken: process.env.VIBEVIEW_TOKEN });
 const pools = await scoped.devicePools.list();
-console.log(sessions.data.length, pools.data.length);
+console.log(sessions.data.length, apps.data.length, pools.data.length);
 ```
 
 ## Errors

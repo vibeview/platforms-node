@@ -1,0 +1,20 @@
+{
+  "body": {
+    "data": [
+      {
+        "access": "shared",
+        "created": 1795429718,
+        "id": "0oq1cuj5oo",
+        "livemode": false,
+        "name": "Preview shell",
+        "object": "app",
+        "package_name": "com.example.preview",
+        "platform": "android"
+      }
+    ],
+    "has_more": false,
+    "object": "list"
+  },
+  "headers": {},
+  "status": 200
+}

@@ -14,6 +14,7 @@ export type { Item, ListBody, Page, PageMethods, PagePromise } from './paginatio
 export { AccountsResource, TokensResource } from './resources/accounts';
 export type { AccessTokenCreateOptions } from './resources/accounts';
 export {
+  AppsResource,
   CollabResource,
   DevicePoolsResource,
   SessionsResource,
@@ -24,6 +25,7 @@ export {
   PartnerResource,
   EventsResource,
   PartnerUsageResource,
+  SharesResource,
   WebhookDeliveriesResource,
   WebhookEndpointsResource,
 } from './resources/partner';
@@ -46,6 +48,8 @@ export type {
   AccountWithUsage,
   SessionRunAgentToolResult,
   APIResponse,
+  App,
+  AppListParams,
   CollabCredential,
   CollabStatus,
   CollabUpdateParams,
@@ -68,6 +72,8 @@ export type {
   SessionListParams,
   SessionPresence,
   SessionRunAgentToolParams,
+  Share,
+  ShareListParams,
   UsageList,
   UsageListParams,
   UsageRecord,

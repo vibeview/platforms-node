@@ -1,0 +1,20 @@
+{
+  "body": {
+    "data": [
+      {
+        "app": "0eiwogaczs",
+        "app_name": "Preview shell",
+        "created": 1795427874,
+        "id": "shr_f00b7303d1b85715",
+        "kind": "app",
+        "livemode": false,
+        "object": "share",
+        "platform": "android"
+      }
+    ],
+    "has_more": false,
+    "object": "list"
+  },
+  "headers": {},
+  "status": 200
+}

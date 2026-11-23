@@ -35,8 +35,10 @@ export class PartnerResource extends VibeView {}
 export class EventsResource extends VibeView {}
 export class PartnerUsageResource extends VibeView {}
 export class WebhookEndpointsResource extends VibeView {}
+export class SharesResource extends VibeView {}
 export class WebhookDeliveriesResource extends VibeView {}
 export class DevicePoolsResource extends VibeView {}
+export class AppsResource extends VibeView {}
 export class UsageResource extends VibeView {}
 export class SessionsResource extends VibeView {}
 export class CollabResource extends VibeView {}

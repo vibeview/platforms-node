@@ -419,6 +419,67 @@
         "title": "AccountWithUsageOut",
         "type": "object"
       },
+      "App": {
+        "description": "An app the account can start a session on. ``access``: ``own`` (the account's own\napp) or ``shared`` (an app your organization shares with your partner: the account can\nlist it, read it and pin a session to it, never change it); an open set. ``platform``\nis an open set (`ios`, `android`, `tvos`, `androidtv` today). ``package_name``: the\napp's bundle id or package name, null when not known. ``created`` is unix seconds.",
+        "properties": {
+          "access": {
+            "title": "Access",
+            "type": "string"
+          },
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "object": {
+            "const": "app",
+            "default": "app",
+            "enum": [
+              "app"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "package_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Name"
+          },
+          "platform": {
+            "title": "Platform",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "id",
+          "name",
+          "platform",
+          "package_name",
+          "access",
+          "livemode",
+          "created"
+        ],
+        "title": "App",
+        "type": "object"
+      },
       "AppLaunch": {
         "additionalProperties": false,
         "description": "Open an app installed on the session's device.",
@@ -489,6 +550,37 @@
           "package_name"
         ],
         "title": "AppLaunchOut",
+        "type": "object"
+      },
+      "AppList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/App"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "list",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "data",
+          "has_more"
+        ],
+        "title": "AppList",
         "type": "object"
       },
       "Caps": {
@@ -954,8 +1046,18 @@
             "status": 409
           },
           {
+            "code": "app_blocked",
+            "meaning": "The app is not allowed to run.",
+            "status": 403
+          },
+          {
+            "code": "app_cannot_run",
+            "meaning": "The app's build cannot run on the device the session asked for.",
+            "status": 409
+          },
+          {
             "code": "app_not_found",
-            "meaning": "No app of this account has that id.",
+            "meaning": "No app this account can use has that id.",
             "status": 404
           },
           {
@@ -1114,6 +1216,11 @@
             "status": 404
           },
           {
+            "code": "share_not_found",
+            "meaning": "No live share of yours has that id.",
+            "status": 404
+          },
+          {
             "code": "streaming_minutes_exhausted",
             "meaning": "The account has no streaming minutes left for this period.",
             "status": 403
@@ -1220,7 +1327,7 @@
         "type": "object"
       },
       "EventData": {
-        "description": "``object``, and for some event types a member beside it: ``cutoff`` on\n``session.cutoff_warning`` only (absent from every other event).",
+        "description": "``object``, and for some event types a member beside it: ``cutoff`` on\n``session.cutoff_warning``, ``reason`` on ``share.deleted`` (``requested`` or\n``partner_terminated``, an open set); each absent from every other event.",
         "properties": {
           "cutoff": {
             "$ref": "#/components/schemas/EventCutoff",
@@ -1229,6 +1336,10 @@
           "object": {
             "title": "Object",
             "type": "object"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
           }
         },
         "required": [
@@ -1422,6 +1533,14 @@
           {
             "sent": true,
             "type": "session.started"
+          },
+          {
+            "sent": true,
+            "type": "share.created"
+          },
+          {
+            "sent": true,
+            "type": "share.deleted"
           },
           {
             "sent": false,
@@ -1838,7 +1957,7 @@
       },
       "SessionCreate": {
         "additionalProperties": false,
-        "description": "A new session in the account. Name the device offering with the four fields\nexactly as `GET /devices/pools` lists it; optionally name an app of the account to\ninstall and open, with launch parameters for it. Any other member is refused.",
+        "description": "A new session in the account. Name the device offering with the four fields\nexactly as `GET /devices/pools` lists it; optionally name an app the account can use\n(`GET /apps`: its own, or one shared with your partner) to install and open, with\nlaunch parameters for it. Any other member is refused.",
         "properties": {
           "app": {
             "anyOf": [
@@ -1850,7 +1969,7 @@
                 "type": "null"
               }
             ],
-            "description": "An app of the account (`app_...`) to install and open.",
+            "description": "An app the account can use, by its id as `GET /apps` lists it (its own, or one shared with your partner), to install and open.",
             "title": "App"
           },
           "device_category": {
@@ -2198,6 +2317,110 @@
           "message"
         ],
         "title": "SessionWarning",
+        "type": "object"
+      },
+      "ShareList": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ShareOut"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "list",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "title": "Object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data",
+          "has_more"
+        ],
+        "title": "ShareList",
+        "type": "object"
+      },
+      "ShareOut": {
+        "description": "Something your organization shares with your partner. ``kind``: ``app`` (an open\nset). ``app`` (the app's id), ``app_name`` and ``platform`` (an open set) are null for\na share that is not an app.",
+        "properties": {
+          "app": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App"
+          },
+          "app_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Name"
+          },
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "livemode": {
+            "title": "Livemode",
+            "type": "boolean"
+          },
+          "object": {
+            "const": "share",
+            "default": "share",
+            "enum": [
+              "share"
+            ],
+            "title": "Object",
+            "type": "string"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Platform"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "app",
+          "app_name",
+          "platform",
+          "livemode",
+          "created"
+        ],
+        "title": "ShareOut",
         "type": "object"
       },
       "TokenCreate": {
@@ -3046,6 +3269,149 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/apps/": {
+      "get": {
+        "description": "The apps the account can start a session on, newest first: its own (`access` `own`) and the apps your organization shares with your partner (`access` `shared`). `limit` 1 to 100 (default 10); `starting_after` an app id from the previous page (another id is 404 `app_not_found`). Allowed by a contract with any of the `sessions`, `embed` or `builds` capabilities.",
+        "operationId": "list_apps",
+        "parameters": [
+          {
+            "description": "1 to 100.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "description": "1 to 100.",
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "An app id from a previous page: the page after it.",
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "An app id from a previous page: the page after it.",
+              "title": "Starting After"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "List the account's apps",
+        "x-required-scope": "apps:read"
+      }
+    },
+    "/api/v1/apps/{app_id}": {
+      "get": {
+        "description": "One app the account can start a session on (its own, or shared with your partner); any other id is 404 `app_not_found`.",
+        "operationId": "get_app",
+        "parameters": [
+          {
+            "example": "0000000000",
+            "in": "path",
+            "name": "app_id",
+            "required": true,
+            "schema": {
+              "title": "App Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The account this request acts in (`org_...`). Required with a partner key; with an access token, optional and, when sent, its own account.",
+            "in": "header",
+            "name": "VibeView-Account",
+            "required": false,
+            "schema": {
+              "example": "org_0000000000000000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/App"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          },
+          {
+            "AccessToken": []
+          }
+        ],
+        "summary": "Get an app",
+        "x-required-scope": "apps:read"
+      }
+    },
     "/api/v1/devices/pools": {
       "get": {
         "description": "The devices a session can be started on, one per type, category, model and OS version; `available` says whether one can be started now.",
@@ -3928,6 +4294,81 @@
         "x-required-scope": "webhooks:read"
       }
     },
+    "/api/v1/partners/{ptn}/shares": {
+      "get": {
+        "description": "What your organization shares with your partner (live shares), newest first. Each\napp share names the app by its id, with its name and platform.",
+        "operationId": "list_shares",
+        "parameters": [
+          {
+            "example": "ptn_0000000000000000",
+            "in": "path",
+            "name": "ptn",
+            "required": true,
+            "schema": {
+              "title": "Ptn",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Starting After"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShareList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "PartnerKey": []
+          }
+        ],
+        "summary": "List Shares",
+        "x-required-scope": "accounts:read"
+      }
+    },
     "/api/v1/partners/{ptn}/usage": {
       "get": {
         "description": "What your accounts used, one record per account, UTC day and usage unit, ordered by\nday, account, unit (accounts in a stable order). ``from``/``to`` inclusive (default the\ncurrent month so far; at most 92 days); ``account`` one account, deleted ones included,\nand then ``current_period`` (the month so far, computed now) when ``to`` reaches today.\n``price`` is the unit price of the contract in force at the end of the record's day,\nnever an amount. Read-only.",
@@ -4641,7 +5082,7 @@
         "x-required-scope": "sessions:read"
       },
       "post": {
-        "description": "Creates a pending session in the account on a device offering: the four fields exactly as `GET /devices/pools` lists them. Optionally names an app of the account to install and open. Start it with `POST /sessions/{session_id}/start`. An offering that exists but has no device in service right now is 409 `device_unavailable` (retry later); anything else that is not an offering is 422 `invalid_request` naming the field. Refused with 403 `concurrent_sessions_limit` when the account uses all the devices it may use at once, `partner_concurrent_sessions_limit` when your accounts together do, and `streaming_minutes_exhausted` when the account has no streaming minutes left.",
+        "description": "Creates a pending session in the account on a device offering: the four fields exactly as `GET /devices/pools` lists them. Optionally names an app the account can use (`GET /apps`) to install and open; an id it cannot use is 404 `app_not_found`. Start it with `POST /sessions/{session_id}/start`. An offering that exists but has no device in service right now is 409 `device_unavailable` (retry later); anything else that is not an offering is 422 `invalid_request` naming the field. Refused with 403 `concurrent_sessions_limit` when the account uses all the devices it may use at once, `partner_concurrent_sessions_limit` when your accounts together do, and `streaming_minutes_exhausted` when the account has no streaming minutes left.",
         "operationId": "create_session",
         "parameters": [
           {

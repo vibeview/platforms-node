@@ -1,7 +1,12 @@
 import { VibeViewError } from './errors';
 import { INTERNAL, type Internals } from './internal';
 import { AccountsResource } from './resources/accounts';
-import { DevicePoolsResource, SessionsResource, UsageResource } from './resources/account-scoped';
+import {
+  AppsResource,
+  DevicePoolsResource,
+  SessionsResource,
+  UsageResource,
+} from './resources/account-scoped';
 import {
   ContractResource,
   EventsResource,
@@ -9,6 +14,7 @@ import {
   PartnerUsageResource,
   WebhookDeliveriesResource,
   WebhookEndpointsResource,
+  SharesResource,
 } from './resources/partner';
 import { checkMaxRetries, checkTimeoutMs, Transport } from './transport';
 import { VERSION } from './version';
@@ -145,8 +151,12 @@ export class VibeView {
   readonly events: EventsResource;
   readonly partnerUsage: PartnerUsageResource;
   readonly webhookEndpoints: WebhookEndpointsResource;
+  /** The apps your organization shares with your partner. */
+  readonly shares: SharesResource;
   readonly webhookDeliveries: WebhookDeliveriesResource;
   readonly devicePools: DevicePoolsResource;
+  /** The apps the account can start a session on: its own and those shared with your partner. */
+  readonly apps: AppsResource;
   readonly usage: UsageResource;
   readonly sessions: SessionsResource;
   /** The same object as `VibeView.webhooks`. */
@@ -211,8 +221,10 @@ export class VibeView {
     this.events = new EventsResource(this.#transport);
     this.partnerUsage = new PartnerUsageResource(this.#transport);
     this.webhookEndpoints = new WebhookEndpointsResource(this.#transport);
+    this.shares = new SharesResource(this.#transport);
     this.webhookDeliveries = new WebhookDeliveriesResource(this.#transport);
     this.devicePools = new DevicePoolsResource(this.#transport);
+    this.apps = new AppsResource(this.#transport);
     this.usage = new UsageResource(this.#transport);
     this.sessions = new SessionsResource(this.#transport);
   }

@@ -28,7 +28,12 @@ export const ERROR_CODES = {
     meaning:
       'This `Idempotency-Key` already created the object named by `id`; its secret is never shown again.',
   },
-  app_not_found: { status: 404, meaning: 'No app of this account has that id.' },
+  app_blocked: { status: 403, meaning: 'The app is not allowed to run.' },
+  app_cannot_run: {
+    status: 409,
+    meaning: "The app's build cannot run on the device the session asked for.",
+  },
+  app_not_found: { status: 404, meaning: 'No app this account can use has that id.' },
   busy: {
     status: 503,
     meaning: 'Another request holds what this one needs; retry after `Retry-After`.',
@@ -146,6 +151,7 @@ export const ERROR_CODES = {
       'The session is not active: it is waiting for a device, starting or stopping. Read it and retry once it is active.',
   },
   session_not_found: { status: 404, meaning: 'No session of this account has that id.' },
+  share_not_found: { status: 404, meaning: 'No live share of yours has that id.' },
   streaming_minutes_exhausted: {
     status: 403,
     meaning: 'The account has no streaming minutes left for this period.',

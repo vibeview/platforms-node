@@ -10,6 +10,8 @@ import type {
   List,
   PartnerUsageListParams,
   RequestOptions,
+  Share,
+  ShareListParams,
   UsageList,
   WebhookDelivery,
   WebhookDeliveryDetail,
@@ -151,5 +153,20 @@ export class WebhookDeliveriesResource {
   /** Sends a delivery again now. */
   retry(delivery: string, options?: RequestOptions): Promise<APIResponse<WebhookDelivery>> {
     return this.#t.request(OPERATIONS.retry_webhook_delivery, { path: { evd: delivery }, options });
+  }
+}
+
+/** The apps your organization shares with your partner (scope `accounts:read`). */
+export class SharesResource {
+  readonly #t: Transport;
+
+  /** @internal Built by `new VibeView()` only. */
+  constructor(transport: Transport) {
+    this.#t = ownTransport(transport);
+  }
+
+  /** Lists the apps your organization shares with your partner, newest first. */
+  list(params?: ShareListParams, options?: RequestOptions): PagePromise<List<Share>> {
+    return this.#t.list(OPERATIONS.list_shares, { query: params, options });
   }
 }

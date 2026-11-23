@@ -5,7 +5,34 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
 package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - Unreleased
+## [0.3.0] - 2026-11-23
+
+### Added
+
+- `apps.list()` and `apps.retrieve()`: the apps an account can start a session on, its own
+  and those your organization shares with your partner (`App`, `AppListParams`; `access` is
+  `own` or `shared`). `sessions.create({ app })` accepts a shared app's id.
+- The `app_unavailable` session end reason: the app the session was started on is no
+  longer shared with the account (its share was removed).
+- The `app_blocked` (403: the app is not allowed to run) and `app_cannot_run` (409: the
+  app's build cannot run on the device the session asked for) error codes.
+
+### Changed
+
+- The `app_not_found` error now reads "No app this account can use has that id." (its code
+  and status are unchanged).
+
+## [0.2.0] - 2026-11-23
+
+Not published on its own: these changes first shipped in 0.3.0.
+
+### Added
+
+- `shares.list()`: the apps your organization shares with your partner (`Share`,
+  `ShareListParams`), the `share.created` and `share.deleted` event types (`share.deleted`
+  carries `data.reason`), and the `share_not_found` error code.
+
+## [0.1.0] - 2026-11-23
 
 ### Added
 

@@ -7,6 +7,8 @@ import { ownTransport, type Transport } from '../transport';
 import type {
   SessionRunAgentToolResult,
   APIResponse,
+  App,
+  AppListParams,
   CollabCredential,
   CollabStatus,
   CollabUpdateParams,
@@ -38,6 +40,29 @@ export class DevicePoolsResource {
   /** Lists the device offerings, one per type, category, model and OS version. */
   list(options?: RequestOptions): PagePromise<List<Device>> {
     return this.#t.list(OPERATIONS.list_device_pools, { options });
+  }
+}
+
+/**
+ * The apps the account can start a session on (scope `apps:read`): its own, and the apps
+ * your organization shares with your partner (`access: 'shared'`).
+ */
+export class AppsResource {
+  readonly #t: Transport;
+
+  /** @internal Built by `new VibeView()` only. */
+  constructor(transport: Transport) {
+    this.#t = ownTransport(transport);
+  }
+
+  /** Lists the apps the account can use, newest first. */
+  list(params?: AppListParams, options?: RequestOptions): PagePromise<List<App>> {
+    return this.#t.list(OPERATIONS.list_apps, { query: params, options });
+  }
+
+  /** One app the account can use; any other id is `404 app_not_found`. */
+  retrieve(app: string, options?: RequestOptions): Promise<APIResponse<App>> {
+    return this.#t.request(OPERATIONS.get_app, { path: { app_id: app }, options });
   }
 }
 

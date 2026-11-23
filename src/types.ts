@@ -116,6 +116,14 @@ export type WebhookEndpoint = Schema<'WebhookEndpointOut'>;
 export type WebhookEndpointListParams = Query<'list_webhook_endpoints'>;
 export type WebhookEndpointRecoverParams = Body<'recover_webhook_endpoint'>;
 
+/** An app the account can start a session on: its own, or one shared with your partner. */
+export type App = Schema<'App'>;
+export type AppListParams = Query<'list_apps'>;
+
+/** An app your organization shares with your partner. */
+export type Share = Schema<'ShareOut'>;
+export type ShareListParams = Query<'list_shares'>;
+
 /** A delivery of an event to an endpoint. */
 export type WebhookDelivery = Schema<'WebhookDeliveryOut'>;
 /** A delivery, with its attempts (`webhookDeliveries.retrieve`). */

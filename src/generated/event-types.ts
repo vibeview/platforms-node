@@ -30,6 +30,8 @@ export const EVENT_TYPES = {
   'session.cutoff_warning': { sent: true },
   'session.ended': { sent: true },
   'session.started': { sent: true },
+  'share.created': { sent: true },
+  'share.deleted': { sent: true },
   'signing_material.exported': { sent: false },
   'submission.failed': { sent: false },
   'submission.needs_action': { sent: false },
