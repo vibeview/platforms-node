@@ -1,6 +1,6 @@
 {
   "name": "@vibeview/platforms",
-  "version": "0.11.0",
+  "version": "0.13.0",
   "description": "Server-side TypeScript client for the VibeView Partner API",
   "keywords": [
     "vibeview",

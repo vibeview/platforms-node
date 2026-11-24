@@ -191,6 +191,10 @@ export const ERROR_CODES = {
     status: 401,
     meaning: 'No valid credential was sent, or it is expired or revoked.',
   },
+  unconfined_sessions_not_allowed: {
+    status: 403,
+    meaning: 'Your contract does not include sessions that can leave their app.',
+  },
   unknown_limit: { status: 422, meaning: '`field` names a limit an account does not have.' },
   unspecified: {
     status: null,

@@ -130,12 +130,35 @@ await vibeview.accounts.update(account.id, {
 });
 ```
 
+## Pin a build
+
+A session installs its app's newest build. To start one on a specific build, pass its build id
+as `build` (the build's public id, which the organization that uploaded it reads in its own
+list of the app's builds). The session's `build` confirms the pin; it is `null` for a session
+that follows the newest build, or once the pinned build has been deleted. A build that is not one of the app's, whose file has expired or
+that cannot run on the offering is refused with `422 invalid_request` and `field: "build"`.
+
+```ts
+import { VibeView } from '@vibeview/platforms';
+
+const customer = new VibeView({ apiKey: process.env.VIBEVIEW_KEY }).withAccount('org_95aa9b33d49e3752');
+const session = await customer.sessions.create({
+  device_type: 'ios',
+  device_category: 'phone',
+  model: 'iPhone 16',
+  os_version: 'iOS 18.6',
+  app: 'app_3f9c2a1b7d',
+  build: 'k3x9q2abm7tw',
+});
+if (session.build !== 'k3x9q2abm7tw') throw new Error('not pinned');
+```
+
 ## Labels and reuse
 
 Tag a session with `labels` (up to 10 pairs of 1 to 64 letters, digits and `. _ : -`; not for
 personal data). With `reuse: true`, a live session of the account (pending, starting or
-active) created through `sessions.create` with exactly the same labels, app and device
-offering is returned instead of a new one, with `reused: true`, however many of your
+active) created through `sessions.create` with exactly the same labels, app, build, `confined`
+and device offering is returned instead of a new one, with `reused: true`, however many of your
 workers ask at once. Its `launch_params` are not applied again.
 
 ```ts
@@ -155,6 +178,28 @@ const preview = await customer.sessions.create({
 // and starting a session that is already starting or active returns it as it is.
 const started = await customer.sessions.start(preview.id);
 console.log(preview.reused, started.status, started.labels);
+```
+
+## Sessions that can leave their app
+
+A session stays in its app by default. When your contract includes it, `confined: false` creates
+one that can leave it: Home, the app switcher and the device's other apps work, for your server
+and your users, and nothing brings the app back. Without it in your contract the call throws
+`unconfined_sessions_not_allowed`.
+
+```ts
+import { VibeView } from '@vibeview/platforms';
+
+const customer = new VibeView({ apiKey: process.env.VIBEVIEW_KEY }).withAccount('org_95aa9b33d49e3752');
+const session = await customer.sessions.create({
+  device_type: 'ios',
+  device_category: 'phone',
+  model: 'iPhone 16',
+  os_version: 'iOS 18.6',
+  app: 'app_3f9c2a1b7d',
+  confined: false,
+});
+console.log(session.confined); // false
 ```
 
 ## Errors

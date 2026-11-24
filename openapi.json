@@ -555,7 +555,7 @@
       },
       "AppLaunch": {
         "additionalProperties": false,
-        "description": "Open the session's app again (with new launch parameters, for example). A session\nstays in its app: any other app is refused (409 `app_not_in_session`).",
+        "description": "Open the session's app again (with new launch parameters, for example). A session\nthat stays in its app (`confined` true) refuses any other app (409\n`app_not_in_session`).",
         "properties": {
           "activity_name": {
             "anyOf": [
@@ -1421,6 +1421,11 @@
             "status": 401
           },
           {
+            "code": "unconfined_sessions_not_allowed",
+            "meaning": "Your contract does not include sessions that can leave their app.",
+            "status": 403
+          },
+          {
             "code": "unknown_limit",
             "meaning": "`field` names a limit an account does not have.",
             "status": 422
@@ -2206,7 +2211,7 @@
       },
       "SessionControl": {
         "additionalProperties": false,
-        "description": "One input to the device, as a person's live input. Coordinates are in the\ndevice's screen pixels as the session's screenshots show them. A button or key that\nleaves the session's app (HOME, APP_SWITCH, RECENTS, LOCK, SIDE_BUTTON, SIRI,\nAPPLE_PAY) is refused (409 `app_not_in_session`).",
+        "description": "One input to the device, as a person's live input. Coordinates are in the\ndevice's screen pixels as the session's screenshots show them. On a session that stays\nin its app (`confined` true), a button or key that leaves the app (HOME, APP_SWITCH,\nRECENTS, LOCK, SIDE_BUTTON, SIRI, APPLE_PAY) is refused (409 `app_not_in_session`).",
         "properties": {
           "action": {
             "description": "The input: tap, swipe, rotate, shake, button, key, touch_*.",
@@ -2370,7 +2375,7 @@
       },
       "SessionCreate": {
         "additionalProperties": false,
-        "description": "A new session in the account. Name the device offering with the four fields\nexactly as `GET /devices/pools` lists it, and the app the account can use (`GET\n/apps`: its own, or one shared with your partner) to install and open, with launch\nparameters for it. A session needs an app: without one the request is refused (422\n`invalid_request`, `field` `app`). The session stays in its app: other apps, Home and\nthe app switcher are not available on its device. `labels` tag the session; with\n`reuse` the account's live session with the same labels, app and offering is returned\ninstead of a new one. Any other member is refused.",
+        "description": "A new session in the account. Name the device offering with the four fields\nexactly as `GET /devices/pools` lists it, and the app the account can use (`GET\n/apps`: its own, or one shared with your partner) to install and open, with launch\nparameters for it. A session needs an app: without one the request is refused (422\n`invalid_request`, `field` `app`). The session installs the app's newest build, or the\none `build` names. The session stays in its app: other apps, Home and the app switcher\nare not available on its device, unless `confined` is `false` and your contract\nincludes sessions that can leave their app. `labels` tag the session; with `reuse` the\naccount's live session with the same labels, app, `build`, `confined` and offering is\nreturned instead of a new one. Any other member is refused.",
         "properties": {
           "app": {
             "anyOf": [
@@ -2384,6 +2389,26 @@
             ],
             "description": "An app the account can use, by its id as `GET /apps` lists it (its own, or one shared with your partner), to install and open. Required: a request without it is refused (422 `invalid_request`).",
             "title": "App"
+          },
+          "build": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "One build of `app` to install, by its build id (the build's `public_id`, as the organization that uploaded it reads it in its own list of the app's builds). Without it the session installs the app's newest build. A build that is not one of the app's, whose file has expired, or that cannot run on the device offering is refused (422 `invalid_request`, `field` `build`).",
+            "title": "Build"
+          },
+          "confined": {
+            "default": true,
+            "description": "`true` (the default): the session stays in its app. `false`: a session that can leave its app (Home, the app switcher and other apps work, as on a person's device), only when your contract includes it; otherwise 403 `unconfined_sessions_not_allowed`. `app` is required either way.",
+            "title": "Confined",
+            "type": "boolean"
           },
           "device_category": {
             "description": "`phone`, `tablet` or `tv` (an open set). Use it exactly as returned.",
@@ -2446,7 +2471,7 @@
           },
           "reuse": {
             "default": false,
-            "description": "Return the account's live session (pending, starting or active) that was created through this route with exactly the same `labels`, `app` and device offering, instead of creating another (answered 200 with `reused: true`). Needs at least one label.",
+            "description": "Return the account's live session (pending, starting or active) that was created through this route with exactly the same `labels`, `app`, `build`, `confined` and device offering, instead of creating another (answered 200 with `reused: true`). Needs at least one label.",
             "title": "Reuse",
             "type": "boolean"
           }
@@ -2477,6 +2502,23 @@
               }
             ],
             "title": "App"
+          },
+          "build": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The pinned build's id (the `build` the session was created with); null when the session follows the app's newest build, or when the pinned build has since been deleted.",
+            "title": "Build"
+          },
+          "confined": {
+            "description": "`true`: the session stays in its app (Home, the app switcher and other apps are not available). `false`: it was created with `confined: false` and can leave its app.",
+            "title": "Confined",
+            "type": "boolean"
           },
           "created": {
             "title": "Created",
@@ -2582,6 +2624,7 @@
           "status",
           "device",
           "app",
+          "build",
           "queue",
           "created",
           "started",
@@ -2591,6 +2634,7 @@
           "warnings",
           "livemode",
           "labels",
+          "confined",
           "reused"
         ],
         "title": "SessionCreated",
@@ -2699,6 +2743,23 @@
             ],
             "title": "App"
           },
+          "build": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The pinned build's id (the `build` the session was created with); null when the session follows the app's newest build, or when the pinned build has since been deleted.",
+            "title": "Build"
+          },
+          "confined": {
+            "description": "`true`: the session stays in its app (Home, the app switcher and other apps are not available). `false`: it was created with `confined: false` and can leave its app.",
+            "title": "Confined",
+            "type": "boolean"
+          },
           "created": {
             "title": "Created",
             "type": "integer"
@@ -2798,6 +2859,7 @@
           "status",
           "device",
           "app",
+          "build",
           "queue",
           "created",
           "started",
@@ -2806,7 +2868,8 @@
           "streaming_seconds",
           "warnings",
           "livemode",
-          "labels"
+          "labels",
+          "confined"
         ],
         "title": "SessionOut",
         "type": "object"
@@ -3100,7 +3163,7 @@
         "type": "object"
       },
       "ToolResultOut": {
-        "description": "A tool call that reached the device, as the tool layer answers it.\n\n``ok`` is false when the tool refused (``result.status`` ``error``, the reason in\n``result.message``), ran but missed (``result.status`` ``warning``, the reason in\n``result.warning``: a tap, long press, drag or alert that did not land, a\n``scroll_until_visible`` that never found its text), or typed into a field that does\nnot hold the text afterwards (``type_text`` / ``clear_text``: ``result.verified``\nfalse, with a ``warning``; ``verified`` null means it could not be checked and is\nstill ``ok``). ``find_element`` finding nothing is ``ok`` true with\n``result.found`` false and a ``message``. ``logs`` is ``ok`` false with a\n``message`` when the app's log is not available.\n\n``result`` is the tool's own answer: for ``screenshot`` a string, an inline data URL\n(``data:image/png;base64,...``), or with ``args.preview: true`` an object\n``{image, preview: {data_url, mime_type, width, height, bytes}}``; null for\n``ui_tree``; an object for every other tool. ``observation`` is the screen after the\ntool (``kind`` ``full``, ``diff``, ``unchanged`` or ``unavailable``, and ``text``),\nnull for ``screenshot`` and ``logs``. ``idle_warning`` is null unless a reading tool\nran close to the inactivity end. A device that gave no answer is never a result: it is\n503 ``device_unreachable``.\n\n``reason`` (null unless ``ok`` is false because the device refused the tool's action),\nan open set (new values may appear: handle one you do not know as ``action_failed``):\n``element_not_visible`` (the element is not visible or is covered), ``gesture_failed``\n(a scroll, drag or long press could not be completed), ``alert_failed`` (no alert could\nbe answered), ``no_app_launched`` (no app is in the foreground), ``link_not_opened``\n(the app did not open the link), ``app_not_in_session`` (the session runs only its own\napp: the tool would open another app or leave it, such as ``press_button`` home, or a\nlink on iOS), ``action_failed`` (any other refusal). Its sentence is in the result's\ntext.",
+        "description": "A tool call that reached the device, as the tool layer answers it.\n\n``ok`` is false when the tool refused (``result.status`` ``error``, the reason in\n``result.message``), ran but missed (``result.status`` ``warning``, the reason in\n``result.warning``: a tap, long press, drag or alert that did not land, a\n``scroll_until_visible`` that never found its text), or typed into a field that does\nnot hold the text afterwards (``type_text`` / ``clear_text``: ``result.verified``\nfalse, with a ``warning``; ``verified`` null means it could not be checked and is\nstill ``ok``). ``find_element`` finding nothing is ``ok`` true with\n``result.found`` false and a ``message``. ``logs`` is ``ok`` false with a\n``message`` when the app's log is not available.\n\n``result`` is the tool's own answer: for ``screenshot`` a string, an inline data URL\n(``data:image/png;base64,...``), or with ``args.preview: true`` an object\n``{image, preview: {data_url, mime_type, width, height, bytes}}``; null for\n``ui_tree``; an object for every other tool. ``observation`` is the screen after the\ntool (``kind`` ``full``, ``diff``, ``unchanged`` or ``unavailable``, and ``text``),\nnull for ``screenshot`` and ``logs``. ``idle_warning`` is null unless a reading tool\nran close to the inactivity end. A device that gave no answer is never a result: it is\n503 ``device_unreachable``.\n\n``reason`` (null unless ``ok`` is false because the device refused the tool's action),\nan open set (new values may appear: handle one you do not know as ``action_failed``):\n``element_not_visible`` (the element is not visible or is covered), ``gesture_failed``\n(a scroll, drag or long press could not be completed), ``alert_failed`` (no alert could\nbe answered), ``no_app_launched`` (no app is in the foreground), ``link_not_opened``\n(the app did not open the link), ``app_not_in_session`` (the session stays in its app:\nthe tool would open another app or leave it, such as ``press_button`` home, or a link on\niOS), ``action_failed`` (any other refusal). Its sentence is in the result's\ntext.",
         "properties": {
           "idle_warning": {
             "anyOf": [
@@ -5817,7 +5880,7 @@
         "x-required-scope": "sessions:read"
       },
       "post": {
-        "description": "Creates a pending session in the account on a device offering: the four fields exactly as `GET /devices/pools` lists them. Names the app the account can use (`GET /apps`) to install and open: a session needs one (without it, 422 `invalid_request` with `field` `app`), and it stays in that app; an id it cannot use is 404 `app_not_found`. Start it with `POST /sessions/{session_id}/start`. An offering that exists but has no device in service right now is 409 `device_unavailable` (retry later); anything else that is not an offering is 422 `invalid_request` naming the field. Refused with 403 `concurrent_sessions_limit` when the account uses all the devices it may use at once, `partner_concurrent_sessions_limit` when your accounts together do, and `streaming_minutes_exhausted` when the account has no streaming minutes left. With `labels` and `reuse: true`, a live session of the account created here with exactly the same labels, app and offering is returned instead (200, `reused: true`), never refused at a limit; its `launch_params` are not applied again. While another request with the same labels is creating one, 409 `session_create_in_progress` (retry in a moment).",
+        "description": "Creates a pending session in the account on a device offering: the four fields exactly as `GET /devices/pools` lists them. Names the app the account can use (`GET /apps`) to install and open: a session needs one (without it, 422 `invalid_request` with `field` `app`), and it stays in that app unless `confined` is `false` (only when your contract includes sessions that can leave their app; otherwise 403 `unconfined_sessions_not_allowed`); an id it cannot use is 404 `app_not_found`. Start it with `POST /sessions/{session_id}/start`. An offering that exists but has no device in service right now is 409 `device_unavailable` (retry later); anything else that is not an offering is 422 `invalid_request` naming the field. Refused with 403 `concurrent_sessions_limit` when the account uses all the devices it may use at once, `partner_concurrent_sessions_limit` when your accounts together do, and `streaming_minutes_exhausted` when the account has no streaming minutes left. With `labels` and `reuse: true`, a live session of the account created here with exactly the same labels, app, `build`, `confined` and offering is returned instead (200, `reused: true`), never refused at a limit; its `launch_params` are not applied again. While another request with the same labels is creating one, 409 `session_create_in_progress` (retry in a moment).",
         "operationId": "create_session",
         "parameters": [
           {
@@ -6016,7 +6079,7 @@
     },
     "/api/v1/sessions/{session_id}/agent/tools": {
       "post": {
-        "description": "Reads or drives the device of an active session, one tool per call. The tools:\n\n- `ui_tree`: the screen's elements as text, each interactive one with a ref (`@e1`) the other tools take.\n- `screenshot`: the screen as an inline PNG data URL (`args.preview: true` adds a smaller copy).\n- `logs`: the app's recent log lines (`args.since`, `args.tail`).\n- `find_element`: find an element by its text or id.\n- `wait`: wait up to 30 seconds (`args.seconds`).\n- `tap`: tap an element by ref.\n- `tap_coordinates`: tap at screen coordinates.\n- `long_press`: press and hold an element or a point.\n- `swipe`: swipe in a direction or between two points.\n- `scroll_until_visible`: scroll until a text or id is on screen.\n- `gesture_preset`: one of a fixed set of gestures.\n- `drag`: drag from one point to another.\n- `alert`: answer a system alert with one of its buttons.\n- `type_text`: type text into the focused field.\n- `clear_text`: clear the focused field.\n- `press_button`: press a device button (back, the TV remote's keys; home, recents, lock and siri leave the app and are refused: `reason` `app_not_in_session`).\n- `open_url`: open a link in the session's app: Android sends it as a view intent to the session's app only; iOS opens no link while the session stays in its app (`reason` `app_not_in_session`).\n- `set_posture`: fold or unfold a foldable device.\n- `rotate`: rotate the device.\n- `shake`: shake the device.\n- `set_location`: set the device's simulated location.\n- `set_status_bar`: show a clean status bar or the device's real one.\n- `set_app_language`: run the app in another language (the app restarts).\n- `relaunch_app`: close the app and start it again.\n- `tap_focused_tv`: select the focused element (TV).\n- `focus_element_tv`: move the focus to an element (TV).\n\nThe reading tools (`ui_tree`, `screenshot`, `logs`, `find_element`, `wait`) keep the session held but are not use; every other tool is use. A `screenshot` result is an inline data URL (`data:image/png;base64,...`), never a link. A tool that reached the device answers 200 with `ok` (see the result object for what `ok` false means and where its reason is). A tool outside this list is 422 `tool_refused`; bad `args` 422 `invalid_request` (`type_text` at most 10000 characters, `scroll_until_visible` at most 50 scrolls, `wait` at most 30 seconds; the body at most 64 KB). A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (every tool, reads included; retry in a few seconds), a device that cannot run agent tools 409 `tool_refused`. A device that gave no answer (it did not reply in time, or nothing reached it) is 503 `device_unreachable` with `Retry-After`: the tool may or may not have acted. One tool runs on a session at a time; when 4 more already wait, a call is 429 `rate_limited` (`limit` `session_tools`, `Retry-After`). Not idempotent (no `Idempotency-Key`: a repeated tap is a second tap); read the session before retrying.",
+        "description": "Reads or drives the device of an active session, one tool per call. The tools:\n\n- `ui_tree`: the screen's elements as text, each interactive one with a ref (`@e1`) the other tools take.\n- `screenshot`: the screen as an inline PNG data URL (`args.preview: true` adds a smaller copy).\n- `logs`: the app's recent log lines (`args.since`, `args.tail`).\n- `find_element`: find an element by its text or id.\n- `wait`: wait up to 30 seconds (`args.seconds`).\n- `tap`: tap an element by ref.\n- `tap_coordinates`: tap at screen coordinates.\n- `long_press`: press and hold an element or a point.\n- `swipe`: swipe in a direction or between two points.\n- `scroll_until_visible`: scroll until a text or id is on screen.\n- `gesture_preset`: one of a fixed set of gestures.\n- `drag`: drag from one point to another.\n- `alert`: answer a system alert with one of its buttons.\n- `type_text`: type text into the focused field.\n- `clear_text`: clear the focused field.\n- `press_button`: press a device button (back, the TV remote's keys; on a session that stays in its app, home, recents, lock and siri leave the app and are refused: `reason` `app_not_in_session`).\n- `open_url`: open a link: on a session that stays in its app, Android sends it as a view intent to the session's app only and iOS opens no link (`reason` `app_not_in_session`); on a session that can leave its app, iOS opens the link as given (a web link in the browser) and Android sends it to the app the session last opened, normally the session's app (it opens there or the tool fails).\n- `set_posture`: fold or unfold a foldable device.\n- `rotate`: rotate the device.\n- `shake`: shake the device.\n- `set_location`: set the device's simulated location.\n- `set_status_bar`: show a clean status bar or the device's real one.\n- `set_app_language`: run the app in another language (the app restarts).\n- `relaunch_app`: close the app and start it again.\n- `tap_focused_tv`: select the focused element (TV).\n- `focus_element_tv`: move the focus to an element (TV).\n\nThe reading tools (`ui_tree`, `screenshot`, `logs`, `find_element`, `wait`) keep the session held but are not use; every other tool is use. A `screenshot` result is an inline data URL (`data:image/png;base64,...`), never a link. A tool that reached the device answers 200 with `ok` (see the result object for what `ok` false means and where its reason is). A tool outside this list is 422 `tool_refused`; bad `args` 422 `invalid_request` (`type_text` at most 10000 characters, `scroll_until_visible` at most 50 scrolls, `wait` at most 30 seconds; the body at most 64 KB). A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (every tool, reads included; retry in a few seconds), a device that cannot run agent tools 409 `tool_refused`. A device that gave no answer (it did not reply in time, or nothing reached it) is 503 `device_unreachable` with `Retry-After`: the tool may or may not have acted. One tool runs on a session at a time; when 4 more already wait, a call is 429 `rate_limited` (`limit` `session_tools`, `Retry-After`). Not idempotent (no `Idempotency-Key`: a repeated tap is a second tap); read the session before retrying.",
         "operationId": "run_agent_tool",
         "parameters": [
           {
@@ -6225,7 +6288,7 @@
     },
     "/api/v1/sessions/{session_id}/control": {
       "post": {
-        "description": "Sends one input (a tap, a swipe, a button or key press, a rotation, a shake, a touch) to the device of an active session, as a person's live input. Any other `action` is 422 `invalid_request`. A button or key that would leave the session's app (Home, the app switcher, Lock, Siri) is 409 `app_not_in_session` and is not sent. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).",
+        "description": "Sends one input (a tap, a swipe, a button or key press, a rotation, a shake, a touch) to the device of an active session, as a person's live input. Any other `action` is 422 `invalid_request`. On a session that stays in its app (`confined` true), a button or key that would leave it (Home, the app switcher, Lock, Siri) is 409 `app_not_in_session` and is not sent. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).",
         "operationId": "control_session",
         "parameters": [
           {
@@ -6295,7 +6358,7 @@
     },
     "/api/v1/sessions/{session_id}/launch-app": {
       "post": {
-        "description": "Opens the session's app on the device of an active session, optionally with launch parameters (a flat JSON object; anything else is 422 `invalid_request`). Any other app is 409 `app_not_in_session` and is not opened: the session stays in its app. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).",
+        "description": "Opens the session's app on the device of an active session, optionally with launch parameters (a flat JSON object; anything else is 422 `invalid_request`). On a session that stays in its app (`confined` true), any other app is 409 `app_not_in_session` and is not opened. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).",
         "operationId": "launch_app",
         "parameters": [
           {

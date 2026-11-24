@@ -135,9 +135,15 @@ export class SessionsResource {
    * `control` of such a button answer `409 app_not_in_session`); `relaunch_app` and
    * `set_app_language` stay available.
    *
+   * The session installs the app's newest build, or the one `build` names (a build id of the
+   * app; the answer's `build` confirms the pin: `null` without one, or once that build is
+   * deleted). A build that is not one
+   * of the app's, has expired or cannot run on the offering is `422 invalid_request` with
+   * `field: "build"`.
+   *
    * `labels` tag the session. With `reuse: true` (needs a label) the account's live session
-   * created here with exactly the same labels, app and offering is returned instead of a new
-   * one (`reused: true`); its `launch_params` are not applied again.
+   * created here with exactly the same labels, app, build, `confined` and offering is returned
+   * instead of a new one (`reused: true`); its `launch_params` are not applied again.
    */
   create(
     body: SessionCreateParams,

@@ -5,6 +5,29 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
 package follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-11-24
+
+### Added
+
+- Pinned builds: `sessions.create` takes `build`, a build id of the session's `app` (the
+  build's public id, as the organization that uploaded it reads it). The session installs that
+  build instead of the app's newest. Every session carries `build` (the pinned build's id;
+  `null` without a pin or once the pinned build is deleted), in reads and in `session.*`
+  events, and `reuse` matches on it. A build that is not one of the app's, has expired or
+  cannot run on the offering is `422 invalid_request` with `field: "build"`.
+
+## [0.12.0] - 2026-11-24
+
+### Added
+
+- Sessions that can leave their app: `sessions.create` takes `confined` (`true` by default).
+  `confined: false` asks for a session that is not held in its app (Home, the app switcher and
+  the device's other apps work), only when your contract includes it; `app` is still required.
+  Every session carries `confined`, in reads and in `session.*` events. A reuse matches it too:
+  a confined and an unconfined session are never returned for each other.
+- The `unconfined_sessions_not_allowed` error code (403: `confined: false` without it in your
+  contract; nothing is created).
+
 ## [0.11.0] - 2026-11-24
 
 ### Added

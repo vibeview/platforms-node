@@ -521,7 +521,7 @@ export interface paths {
     put?: never;
     /**
      * Create a session
-     * @description Creates a pending session in the account on a device offering: the four fields exactly as `GET /devices/pools` lists them. Names the app the account can use (`GET /apps`) to install and open: a session needs one (without it, 422 `invalid_request` with `field` `app`), and it stays in that app; an id it cannot use is 404 `app_not_found`. Start it with `POST /sessions/{session_id}/start`. An offering that exists but has no device in service right now is 409 `device_unavailable` (retry later); anything else that is not an offering is 422 `invalid_request` naming the field. Refused with 403 `concurrent_sessions_limit` when the account uses all the devices it may use at once, `partner_concurrent_sessions_limit` when your accounts together do, and `streaming_minutes_exhausted` when the account has no streaming minutes left. With `labels` and `reuse: true`, a live session of the account created here with exactly the same labels, app and offering is returned instead (200, `reused: true`), never refused at a limit; its `launch_params` are not applied again. While another request with the same labels is creating one, 409 `session_create_in_progress` (retry in a moment).
+     * @description Creates a pending session in the account on a device offering: the four fields exactly as `GET /devices/pools` lists them. Names the app the account can use (`GET /apps`) to install and open: a session needs one (without it, 422 `invalid_request` with `field` `app`), and it stays in that app unless `confined` is `false` (only when your contract includes sessions that can leave their app; otherwise 403 `unconfined_sessions_not_allowed`); an id it cannot use is 404 `app_not_found`. Start it with `POST /sessions/{session_id}/start`. An offering that exists but has no device in service right now is 409 `device_unavailable` (retry later); anything else that is not an offering is 422 `invalid_request` naming the field. Refused with 403 `concurrent_sessions_limit` when the account uses all the devices it may use at once, `partner_concurrent_sessions_limit` when your accounts together do, and `streaming_minutes_exhausted` when the account has no streaming minutes left. With `labels` and `reuse: true`, a live session of the account created here with exactly the same labels, app, `build`, `confined` and offering is returned instead (200, `reused: true`), never refused at a limit; its `launch_params` are not applied again. While another request with the same labels is creating one, 409 `session_create_in_progress` (retry in a moment).
      */
     post: operations['create_session'];
     delete?: never;
@@ -582,8 +582,8 @@ export interface paths {
      *     - `alert`: answer a system alert with one of its buttons.
      *     - `type_text`: type text into the focused field.
      *     - `clear_text`: clear the focused field.
-     *     - `press_button`: press a device button (back, the TV remote's keys; home, recents, lock and siri leave the app and are refused: `reason` `app_not_in_session`).
-     *     - `open_url`: open a link in the session's app: Android sends it as a view intent to the session's app only; iOS opens no link while the session stays in its app (`reason` `app_not_in_session`).
+     *     - `press_button`: press a device button (back, the TV remote's keys; on a session that stays in its app, home, recents, lock and siri leave the app and are refused: `reason` `app_not_in_session`).
+     *     - `open_url`: open a link: on a session that stays in its app, Android sends it as a view intent to the session's app only and iOS opens no link (`reason` `app_not_in_session`); on a session that can leave its app, iOS opens the link as given (a web link in the browser) and Android sends it to the app the session last opened, normally the session's app (it opens there or the tool fails).
      *     - `set_posture`: fold or unfold a foldable device.
      *     - `rotate`: rotate the device.
      *     - `shake`: shake the device.
@@ -638,7 +638,7 @@ export interface paths {
     put?: never;
     /**
      * Send input to a session's device
-     * @description Sends one input (a tap, a swipe, a button or key press, a rotation, a shake, a touch) to the device of an active session, as a person's live input. Any other `action` is 422 `invalid_request`. A button or key that would leave the session's app (Home, the app switcher, Lock, Siri) is 409 `app_not_in_session` and is not sent. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).
+     * @description Sends one input (a tap, a swipe, a button or key press, a rotation, a shake, a touch) to the device of an active session, as a person's live input. Any other `action` is 422 `invalid_request`. On a session that stays in its app (`confined` true), a button or key that would leave it (Home, the app switcher, Lock, Siri) is 409 `app_not_in_session` and is not sent. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).
      */
     post: operations['control_session'];
     delete?: never;
@@ -658,7 +658,7 @@ export interface paths {
     put?: never;
     /**
      * Open an app on a session's device
-     * @description Opens the session's app on the device of an active session, optionally with launch parameters (a flat JSON object; anything else is 422 `invalid_request`). Any other app is 409 `app_not_in_session` and is not opened: the session stays in its app. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).
+     * @description Opens the session's app on the device of an active session, optionally with launch parameters (a flat JSON object; anything else is 422 `invalid_request`). On a session that stays in its app (`confined` true), any other app is 409 `app_not_in_session` and is not opened. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).
      */
     post: operations['launch_app'];
     delete?: never;
@@ -979,7 +979,8 @@ export interface components {
     /**
      * AppLaunch
      * @description Open the session's app again (with new launch parameters, for example). A session
-     *     stays in its app: any other app is refused (409 `app_not_in_session`).
+     *     that stays in its app (`confined` true) refuses any other app (409
+     *     `app_not_in_session`).
      */
     AppLaunch: {
       /**
@@ -1546,9 +1547,9 @@ export interface components {
     /**
      * SessionControl
      * @description One input to the device, as a person's live input. Coordinates are in the
-     *     device's screen pixels as the session's screenshots show them. A button or key that
-     *     leaves the session's app (HOME, APP_SWITCH, RECENTS, LOCK, SIDE_BUTTON, SIRI,
-     *     APPLE_PAY) is refused (409 `app_not_in_session`).
+     *     device's screen pixels as the session's screenshots show them. On a session that stays
+     *     in its app (`confined` true), a button or key that leaves the app (HOME, APP_SWITCH,
+     *     RECENTS, LOCK, SIDE_BUTTON, SIRI, APPLE_PAY) is refused (409 `app_not_in_session`).
      */
     SessionControl: {
       /**
@@ -1625,10 +1626,12 @@ export interface components {
      *     exactly as `GET /devices/pools` lists it, and the app the account can use (`GET
      *     /apps`: its own, or one shared with your partner) to install and open, with launch
      *     parameters for it. A session needs an app: without one the request is refused (422
-     *     `invalid_request`, `field` `app`). The session stays in its app: other apps, Home and
-     *     the app switcher are not available on its device. `labels` tag the session; with
-     *     `reuse` the account's live session with the same labels, app and offering is returned
-     *     instead of a new one. Any other member is refused.
+     *     `invalid_request`, `field` `app`). The session installs the app's newest build, or the
+     *     one `build` names. The session stays in its app: other apps, Home and the app switcher
+     *     are not available on its device, unless `confined` is `false` and your contract
+     *     includes sessions that can leave their app. `labels` tag the session; with `reuse` the
+     *     account's live session with the same labels, app, `build`, `confined` and offering is
+     *     returned instead of a new one. Any other member is refused.
      */
     SessionCreate: {
       /**
@@ -1636,6 +1639,17 @@ export interface components {
        * @description An app the account can use, by its id as `GET /apps` lists it (its own, or one shared with your partner), to install and open. Required: a request without it is refused (422 `invalid_request`).
        */
       app?: string | null;
+      /**
+       * Build
+       * @description One build of `app` to install, by its build id (the build's `public_id`, as the organization that uploaded it reads it in its own list of the app's builds). Without it the session installs the app's newest build. A build that is not one of the app's, whose file has expired, or that cannot run on the device offering is refused (422 `invalid_request`, `field` `build`).
+       */
+      build?: string | null;
+      /**
+       * Confined
+       * @description `true` (the default): the session stays in its app. `false`: a session that can leave its app (Home, the app switcher and other apps work, as on a person's device), only when your contract includes it; otherwise 403 `unconfined_sessions_not_allowed`. `app` is required either way.
+       * @default true
+       */
+      confined?: boolean;
       /**
        * Device Category
        * @description `phone`, `tablet` or `tv` (an open set). Use it exactly as returned.
@@ -1671,7 +1685,7 @@ export interface components {
       os_version: string;
       /**
        * Reuse
-       * @description Return the account's live session (pending, starting or active) that was created through this route with exactly the same `labels`, `app` and device offering, instead of creating another (answered 200 with `reused: true`). Needs at least one label.
+       * @description Return the account's live session (pending, starting or active) that was created through this route with exactly the same `labels`, `app`, `build`, `confined` and device offering, instead of creating another (answered 200 with `reused: true`). Needs at least one label.
        * @default false
        */
       reuse?: boolean;
@@ -1686,6 +1700,16 @@ export interface components {
       account: string;
       /** App */
       app: string | null;
+      /**
+       * Build
+       * @description The pinned build's id (the `build` the session was created with); null when the session follows the app's newest build, or when the pinned build has since been deleted.
+       */
+      build: string | null;
+      /**
+       * Confined
+       * @description `true`: the session stays in its app (Home, the app switcher and other apps are not available). `false`: it was created with `confined: false` and can leave its app.
+       */
+      confined: boolean;
       /** Created */
       created: number;
       device: components['schemas']['SessionDevice'];
@@ -1782,6 +1806,16 @@ export interface components {
       account: string;
       /** App */
       app: string | null;
+      /**
+       * Build
+       * @description The pinned build's id (the `build` the session was created with); null when the session follows the app's newest build, or when the pinned build has since been deleted.
+       */
+      build: string | null;
+      /**
+       * Confined
+       * @description `true`: the session stays in its app (Home, the app switcher and other apps are not available). `false`: it was created with `confined: false` and can leave its app.
+       */
+      confined: boolean;
       /** Created */
       created: number;
       device: components['schemas']['SessionDevice'];
@@ -1991,9 +2025,9 @@ export interface components {
      *     ``element_not_visible`` (the element is not visible or is covered), ``gesture_failed``
      *     (a scroll, drag or long press could not be completed), ``alert_failed`` (no alert could
      *     be answered), ``no_app_launched`` (no app is in the foreground), ``link_not_opened``
-     *     (the app did not open the link), ``app_not_in_session`` (the session runs only its own
-     *     app: the tool would open another app or leave it, such as ``press_button`` home, or a
-     *     link on iOS), ``action_failed`` (any other refusal). Its sentence is in the result's
+     *     (the app did not open the link), ``app_not_in_session`` (the session stays in its app:
+     *     the tool would open another app or leave it, such as ``press_button`` home, or a link on
+     *     iOS), ``action_failed`` (any other refusal). Its sentence is in the result's
      *     text.
      */
     ToolResultOut: {
