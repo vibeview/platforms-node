@@ -3,6 +3,8 @@ import type { PagePromise } from '../pagination';
 import { ownTransport, type Transport } from '../transport';
 import type {
   APIResponse,
+  EmbedKey,
+  EmbedKeyListParams,
   Partner,
   Contract,
   Event,
@@ -153,6 +155,25 @@ export class WebhookDeliveriesResource {
   /** Sends a delivery again now. */
   retry(delivery: string, options?: RequestOptions): Promise<APIResponse<WebhookDelivery>> {
     return this.#t.request(OPERATIONS.retry_webhook_delivery, { path: { evd: delivery }, options });
+  }
+}
+
+/**
+ * Your partner's embed keys on the apps your organization shares with it (scope
+ * `accounts:read`). Keys are created and managed on the Partner page; a key never carries its
+ * visitor secret here.
+ */
+export class EmbedKeysResource {
+  readonly #t: Transport;
+
+  /** @internal Built by `new VibeView()` only. */
+  constructor(transport: Transport) {
+    this.#t = ownTransport(transport);
+  }
+
+  /** Lists your partner's live embed keys, newest first. */
+  list(params?: EmbedKeyListParams, options?: RequestOptions): PagePromise<List<EmbedKey>> {
+    return this.#t.list(OPERATIONS.list_embed_keys, { query: params, options });
   }
 }
 

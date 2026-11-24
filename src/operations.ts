@@ -61,6 +61,12 @@ export const OPERATIONS = {
   delete_account: op('delete_account', 'DELETE', '/partners/{ptn}/accounts/{org}'),
   suspend_account: op('suspend_account', 'POST', '/partners/{ptn}/accounts/{org}/suspend', keyed),
   resume_account: op('resume_account', 'POST', '/partners/{ptn}/accounts/{org}/resume', keyed),
+  add_extra_minutes: op(
+    'add_extra_minutes',
+    'POST',
+    '/partners/{ptn}/accounts/{org}/extra-minutes',
+    keyed,
+  ),
   mint_access_token: op(
     'mint_access_token',
     'POST',
@@ -110,6 +116,7 @@ export const OPERATIONS = {
     keyed,
   ),
   list_shares: op('list_shares', 'GET', '/partners/{ptn}/shares', { paginated: true }),
+  list_embed_keys: op('list_embed_keys', 'GET', '/partners/{ptn}/embed-keys', { paginated: true }),
   list_device_pools: op('list_device_pools', 'GET', '/devices/pools', inAccount),
   list_apps: op('list_apps', 'GET', '/apps/', { ...inAccount, paginated: true }),
   get_app: op('get_app', 'GET', '/apps/{app_id}', inAccount),

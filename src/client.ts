@@ -15,6 +15,7 @@ import {
   WebhookDeliveriesResource,
   WebhookEndpointsResource,
   SharesResource,
+  EmbedKeysResource,
 } from './resources/partner';
 import { checkMaxRetries, checkTimeoutMs, Transport } from './transport';
 import { VERSION } from './version';
@@ -153,6 +154,8 @@ export class VibeView {
   readonly webhookEndpoints: WebhookEndpointsResource;
   /** The apps your organization shares with your partner. */
   readonly shares: SharesResource;
+  /** Your partner's embed keys on the apps your organization shares with it. */
+  readonly embedKeys: EmbedKeysResource;
   readonly webhookDeliveries: WebhookDeliveriesResource;
   readonly devicePools: DevicePoolsResource;
   /** The apps the account can start a session on: its own and those shared with your partner. */
@@ -222,6 +225,7 @@ export class VibeView {
     this.partnerUsage = new PartnerUsageResource(this.#transport);
     this.webhookEndpoints = new WebhookEndpointsResource(this.#transport);
     this.shares = new SharesResource(this.#transport);
+    this.embedKeys = new EmbedKeysResource(this.#transport);
     this.webhookDeliveries = new WebhookDeliveriesResource(this.#transport);
     this.devicePools = new DevicePoolsResource(this.#transport);
     this.apps = new AppsResource(this.#transport);

@@ -523,7 +523,9 @@ export class Transport {
       const transient =
         response.status >= 500 ||
         response.status === 429 ||
-        (response.status === 409 && error.code === 'idempotency_in_progress');
+        (response.status === 409 &&
+          (error.code === 'idempotency_in_progress' ||
+            error.code === 'session_create_in_progress'));
       if (!transient || !canRetry) throw error;
       // Waiting less than the API asked would only be refused again: a longer wait than
       // the cap is the caller's to decide (the error carries retryAfterMs).

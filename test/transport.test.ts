@@ -206,6 +206,37 @@ describe('retries', () => {
     expect(api.seen[0]?.headers['idempotency-key']).toBe(api.seen[1]?.headers['idempotency-key']);
   });
 
+  it('409 session_create_in_progress waits Retry-After and retries the create with the same key', async () => {
+    const created = {
+      object: 'session',
+      id: '9f6c1f4e-0000-4000-8000-000000000001',
+      reused: true,
+      labels: { project: 'p-42' },
+    };
+    const api = await fakeApi([
+      {
+        status: 409,
+        body: errorBody('session_create_in_progress', 'Another request is creating it.'),
+        headers: { 'Retry-After': '1' },
+      },
+      { status: 200, body: created },
+    ]);
+    const { client, delays } = testClient(api, { account: ORG });
+    const got = await client.sessions.create({
+      device_type: 'ios',
+      device_category: 'phone',
+      model: 'iPhone 16',
+      os_version: 'iOS 18.6',
+      app: 'app_x',
+      labels: { project: 'p-42' },
+      reuse: true,
+    });
+    expect(got.reused).toBe(true);
+    expect(delays).toEqual([1000]);
+    expect(api.seen).toHaveLength(2);
+    expect(api.seen[0]?.headers['idempotency-key']).toBe(api.seen[1]?.headers['idempotency-key']);
+  });
+
   it('429 waits Retry-After seconds', async () => {
     const api = await fakeApi([
       {

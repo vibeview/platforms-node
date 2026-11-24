@@ -18,6 +18,7 @@ import type {
   Session,
   SessionControlParams,
   SessionControlResult,
+  SessionCreated,
   SessionCreateParams,
   SessionLaunchAppParams,
   SessionLaunchAppResult,
@@ -127,8 +128,21 @@ export class SessionsResource {
     this.collab = new CollabResource(transport);
   }
 
-  /** Creates a session. */
-  create(body: SessionCreateParams, options?: RequestOptions): Promise<APIResponse<Session>> {
+  /**
+   * Creates a session on the app named by `app` (required: without it the API answers
+   * `422 invalid_request` with `field: "app"`). The session stays in its app: another app,
+   * Home and the app switcher are not available on its device (`launchApp` of another app and
+   * `control` of such a button answer `409 app_not_in_session`); `relaunch_app` and
+   * `set_app_language` stay available.
+   *
+   * `labels` tag the session. With `reuse: true` (needs a label) the account's live session
+   * created here with exactly the same labels, app and offering is returned instead of a new
+   * one (`reused: true`); its `launch_params` are not applied again.
+   */
+  create(
+    body: SessionCreateParams,
+    options?: RequestOptions,
+  ): Promise<APIResponse<SessionCreated>> {
     return this.#t.request(OPERATIONS.create_session, { body, options });
   }
 
@@ -160,7 +174,10 @@ export class SessionsResource {
     });
   }
 
-  /** Sends input to the device. Not idempotent: never retried, a repeat is a second input. */
+  /**
+   * Sends input to the device. Not idempotent: never retried, a repeat is a second input. A
+   * button or key that leaves the session's app answers `409 app_not_in_session`.
+   */
   control(
     session: string,
     body: SessionControlParams,
@@ -173,7 +190,10 @@ export class SessionsResource {
     });
   }
 
-  /** Opens an app on the device. Not idempotent: never retried. */
+  /**
+   * Opens the session's app on the device. Not idempotent: never retried. Another app
+   * answers `409 app_not_in_session`.
+   */
   launchApp(
     session: string,
     body: SessionLaunchAppParams,

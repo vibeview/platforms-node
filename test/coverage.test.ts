@@ -29,6 +29,10 @@ const METHODS: Record<string, [string, (c: VibeView) => Promise<unknown>]> = {
   delete_account: ['accounts.del', (c) => c.accounts.del(ORG)],
   suspend_account: ['accounts.suspend', (c) => c.accounts.suspend(ORG)],
   resume_account: ['accounts.resume', (c) => c.accounts.resume(ORG)],
+  add_extra_minutes: [
+    'accounts.addExtraMinutes',
+    (c) => c.accounts.addExtraMinutes(ORG, { streaming_minutes: 30 }),
+  ],
   mint_access_token: [
     'accounts.tokens.create',
     (c) => c.accounts.tokens.create(ORG, { scopes: ['sessions:read'] }),
@@ -49,6 +53,7 @@ const METHODS: Record<string, [string, (c: VibeView) => Promise<unknown>]> = {
   ],
   retry_webhook_delivery: ['webhookDeliveries.retry', (c) => c.webhookDeliveries.retry('evd_1')],
   list_shares: ['shares.list', (c) => c.shares.list()],
+  list_embed_keys: ['embedKeys.list', (c) => c.embedKeys.list()],
   list_device_pools: ['devicePools.list', (c) => c.devicePools.list()],
   list_apps: ['apps.list', (c) => c.apps.list()],
   get_app: ['apps.retrieve', (c) => c.apps.retrieve('a_1')],

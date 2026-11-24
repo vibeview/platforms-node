@@ -51,9 +51,15 @@ const me = await vibeview.partner.retrieve();
 console.log(me.id, me.environment);
 
 // One account per customer. Find it again by your own id before you create one.
+// period_anchor_day: the day of the month its limits reset (defaults to the day it is created).
 const account =
   (await vibeview.accounts.findByExternalRef('cust_1042')) ??
-  (await vibeview.accounts.create({ external_ref: 'cust_1042', display_name: 'Northwind' }));
+  (await vibeview.accounts.create({
+    external_ref: 'cust_1042',
+    display_name: 'Northwind',
+    period_anchor_day: 15,
+  }));
+console.log(account.period.start, account.period.end); // its current period, unix seconds
 
 // A short-lived access token for that account only.
 const token = await vibeview.accounts.tokens.create(account.id, {
@@ -70,7 +76,7 @@ for await (const each of vibeview.accounts.list({ limit: 100 })) {
 
 ## Acting in an account
 
-Calls under `/partners/{ptn}` (accounts, tokens, contract, shares, events, webhook endpoints and
+Calls under `/partners/{ptn}` (accounts, tokens, contract, shares, embed keys, events, webhook endpoints and
 deliveries, `partnerUsage`) take your partner key. Calls that act in
 one account (`sessions`, `devicePools`, `apps`, `usage`) need that account: with a partner key, name
 it with `withAccount` (sent as the `VibeView-Account` header); an access token is bound to
@@ -89,6 +95,66 @@ const apps = await customer.apps.list();
 const scoped = new VibeView({ accessToken: process.env.VIBEVIEW_TOKEN });
 const pools = await scoped.devicePools.list();
 console.log(sessions.data.length, apps.data.length, pools.data.length);
+```
+
+## Extra minutes
+
+Give an account streaming minutes beyond its `streaming_minutes_per_month` for its current
+period: they are used once the period's monthly minutes are used up, and end with the period
+(`extra.expires_at`). Add a slice when a session starts and another when it is warned; the
+client sends an `Idempotency-Key` with each, so a retry never adds twice.
+
+```ts
+import { VibeView } from '@vibeview/platforms';
+
+const vibeview = new VibeView({ apiKey: process.env.VIBEVIEW_KEY });
+const account = await vibeview.accounts.addExtraMinutes('org_95aa9b33d49e3752', {
+  streaming_minutes: 30,
+});
+console.log(account.extra.streaming_minutes, account.extra.expires_at);
+
+// On session.cutoff_warning: add to the period the warning names (a session that started
+// in the previous period is still measured against it).
+const periodStart = 1794700800; // the event's data.cutoff.period.start
+await vibeview.accounts.addExtraMinutes(account.id, {
+  streaming_minutes: 30,
+  period_start: periodStart,
+});
+
+// At session.ended: settle with session.streaming_seconds, then set what is left. The set
+// applies to the whole account: keep what its other running sessions still hold (0 only when
+// none is running), or they lose those minutes and end.
+const stillHeldByOtherSessions = 0; // your own record of the slices the other sessions hold
+await vibeview.accounts.update(account.id, {
+  extra: { streaming_minutes: stillHeldByOtherSessions },
+});
+```
+
+## Labels and reuse
+
+Tag a session with `labels` (up to 10 pairs of 1 to 64 letters, digits and `. _ : -`; not for
+personal data). With `reuse: true`, a live session of the account (pending, starting or
+active) created through `sessions.create` with exactly the same labels, app and device
+offering is returned instead of a new one, with `reused: true`, however many of your
+workers ask at once. Its `launch_params` are not applied again.
+
+```ts
+import { VibeView } from '@vibeview/platforms';
+
+const customer = new VibeView({ apiKey: process.env.VIBEVIEW_KEY }).withAccount('org_95aa9b33d49e3752');
+const preview = await customer.sessions.create({
+  device_type: 'ios',
+  device_category: 'phone',
+  model: 'iPhone 16',
+  os_version: 'iOS 18.6',
+  app: 'app_3f9c2a1b7d',
+  labels: { project: 'p-42', purpose: 'preview' },
+  reuse: true,
+});
+// Always start: a reused session may never have been started by the worker that created it,
+// and starting a session that is already starting or active returns it as it is.
+const started = await customer.sessions.start(preview.id);
+console.log(preview.reused, started.status, started.labels);
 ```
 
 ## Errors
@@ -146,9 +212,11 @@ Only a call that is safe to repeat is retried:
 - reads, deletes and `sessions.keepAlive`;
 - `accounts.update`: sending the same change again leaves the account as it is and sends no
   second event. If another writer changed the account between two attempts, the retry writes
-  this call's values again (the last writer wins);
+  this call's values again (the last writer wins). For `extra`, a retry sets what is left again
+  at the time of the retry: it replaces an add made between the two attempts and gives back
+  the seconds used between them;
 - the calls the API takes an `Idempotency-Key` on: `accounts.create`, `accounts.suspend`,
-  `accounts.resume`, `accounts.tokens.create`, `webhookEndpoints.recover`,
+  `accounts.resume`, `accounts.addExtraMinutes`, `accounts.tokens.create`, `webhookEndpoints.recover`,
   `webhookDeliveries.retry`, `sessions.create`, `sessions.start` and `sessions.collab.update`.
   The client sends a key with each, the same one on every retry, so a retry never acts twice;
   pass `idempotencyKey` to choose it yourself. No other call takes one.
@@ -211,6 +279,26 @@ for (;;) {
   if (next === null) break;
   page = await next;
 }
+```
+
+## Embedding
+
+A partner embed key's frame starts each visitor's session in the account their visitor
+token names. Sign the token on your server for each page load and put it in the frame URL's
+fragment; the visitor secret never reaches the browser.
+
+```ts
+import { signVisitorToken } from '@vibeview/platforms';
+
+const token = await signVisitorToken({
+  embedKey: 'ek_test_0a1b2c3d4e5f6g7h8i9j0k1l',
+  secret: process.env.VIBEVIEW_VISITOR_SECRET ?? '',
+  account: 'org_0123456789abcdef',
+  subject: 'customer-42',
+  ttl: 300,
+});
+// The frame's address, for your page: the token is a credential, so never log it.
+export const embedSrc = `https://vibeview.io/embed/ek_test_0a1b2c3d4e5f6g7h8i9j0k1l#visitor_token=${token}`;
 ```
 
 ## Webhooks

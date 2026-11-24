@@ -87,6 +87,7 @@ export type AccountDeletion = Schema<'AccountDeletionOut'>;
 export type AccountCreateParams = Body<'create_account'>;
 export type AccountUpdateParams = Body<'update_account'>;
 export type AccountSuspendParams = NonNullable<Body<'suspend_account'>>;
+export type AccountExtraMinutesParams = Body<'add_extra_minutes'>;
 export type AccountListParams = Query<'list_accounts'>;
 export type AccountDeleteParams = Query<'delete_account'>;
 
@@ -120,6 +121,10 @@ export type WebhookEndpointRecoverParams = Body<'recover_webhook_endpoint'>;
 export type App = Schema<'App'>;
 export type AppListParams = Query<'list_apps'>;
 
+/** An embed key of your partner on an app your organization shares with it. */
+export type EmbedKey = Schema<'PartnerEmbedKey'>;
+export type EmbedKeyListParams = Query<'list_embed_keys'>;
+
 /** An app your organization shares with your partner. */
 export type Share = Schema<'ShareOut'>;
 export type ShareListParams = Query<'list_shares'>;
@@ -142,6 +147,8 @@ export type Device = Schema<'DeviceOut'>;
 
 /** A session. */
 export type Session = Schema<'SessionOut'>;
+/** The answer to `sessions.create`: the session, and whether `reuse` returned an existing one. */
+export type SessionCreated = Schema<'SessionCreated'>;
 export type SessionCreateParams = Body<'create_session'>;
 export type SessionListParams = Query<'list_sessions'>;
 /** The answer to `sessions.keepAlive`. */

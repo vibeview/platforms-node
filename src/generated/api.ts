@@ -119,7 +119,7 @@ export interface paths {
     };
     /**
      * Get Account
-     * @description One account, with its usage this calendar month (UTC).
+     * @description One account, with its usage in its current period.
      */
     get: operations['get_account'];
     put?: never;
@@ -140,10 +140,41 @@ export interface paths {
     head?: never;
     /**
      * Update Account
-     * @description Merge ``display_name`` (``null``: back to the ref) and ``limits`` (only the units
-     *     sent change). The ``external_ref`` never changes.
+     * @description Merge ``display_name`` (``null``: back to the ref), ``limits`` (only the units
+     *     sent change), ``period_anchor_day`` (a change cuts the current period; 409
+     *     ``period_change_blocked`` while a session or build from before it still runs) and
+     *     ``extra.streaming_minutes`` (what is left of the extra minutes in the current period from
+     *     now on; 409 ``extra_not_applicable`` for an unlimited monthly limit). The
+     *     ``external_ref`` never changes.
      */
     patch: operations['update_account'];
+    trace?: never;
+  };
+  '/api/v1/partners/{ptn}/accounts/{org}/extra-minutes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Add Extra Minutes
+     * @description Give the account extra streaming minutes for one period: used only once the period's
+     *     monthly minutes are used up, and ending with it. Additive: each call adds
+     *     ``streaming_minutes`` (1 to 100,000; a period's total at most 1,000,000), so send an
+     *     ``Idempotency-Key`` (a repeat returns the first answer and adds nothing). ``period_start``
+     *     (unix seconds) defaults to the current period; the previous period's start is accepted
+     *     while a session that started in it still runs (``session.cutoff_warning`` names it).
+     *     Answers the account, its ``extra`` being what is left in that period. 409
+     *     ``extra_not_applicable`` when ``streaming_minutes_per_month`` is ``"unlimited"``.
+     */
+    post: operations['add_extra_minutes'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   '/api/v1/partners/{ptn}/accounts/{org}/resume': {
@@ -258,6 +289,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/partners/{ptn}/embed-keys': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Embed Keys
+     * @description Your partner's live embed keys, newest first. Never a visitor secret.
+     */
+    get: operations['list_embed_keys'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/partners/{ptn}/events': {
     parameters: {
       query?: never;
@@ -314,7 +365,8 @@ export interface paths {
      * @description What your accounts used, one record per account, UTC day and usage unit, ordered by
      *     day, account, unit (accounts in a stable order). ``from``/``to`` inclusive (default the
      *     current month so far; at most 92 days); ``account`` one account, deleted ones included,
-     *     and then ``current_period`` (the month so far, computed now) when ``to`` reaches today.
+     *     and then ``current_period`` (the account's current period so far, computed now) when
+     *     ``to`` reaches today.
      *     ``price`` is the unit price of the contract in force at the end of the record's day,
      *     never an amount. Read-only.
      */
@@ -469,7 +521,7 @@ export interface paths {
     put?: never;
     /**
      * Create a session
-     * @description Creates a pending session in the account on a device offering: the four fields exactly as `GET /devices/pools` lists them. Optionally names an app the account can use (`GET /apps`) to install and open; an id it cannot use is 404 `app_not_found`. Start it with `POST /sessions/{session_id}/start`. An offering that exists but has no device in service right now is 409 `device_unavailable` (retry later); anything else that is not an offering is 422 `invalid_request` naming the field. Refused with 403 `concurrent_sessions_limit` when the account uses all the devices it may use at once, `partner_concurrent_sessions_limit` when your accounts together do, and `streaming_minutes_exhausted` when the account has no streaming minutes left.
+     * @description Creates a pending session in the account on a device offering: the four fields exactly as `GET /devices/pools` lists them. Names the app the account can use (`GET /apps`) to install and open: a session needs one (without it, 422 `invalid_request` with `field` `app`), and it stays in that app; an id it cannot use is 404 `app_not_found`. Start it with `POST /sessions/{session_id}/start`. An offering that exists but has no device in service right now is 409 `device_unavailable` (retry later); anything else that is not an offering is 422 `invalid_request` naming the field. Refused with 403 `concurrent_sessions_limit` when the account uses all the devices it may use at once, `partner_concurrent_sessions_limit` when your accounts together do, and `streaming_minutes_exhausted` when the account has no streaming minutes left. With `labels` and `reuse: true`, a live session of the account created here with exactly the same labels, app and offering is returned instead (200, `reused: true`), never refused at a limit; its `launch_params` are not applied again. While another request with the same labels is creating one, 409 `session_create_in_progress` (retry in a moment).
      */
     post: operations['create_session'];
     delete?: never;
@@ -530,8 +582,8 @@ export interface paths {
      *     - `alert`: answer a system alert with one of its buttons.
      *     - `type_text`: type text into the focused field.
      *     - `clear_text`: clear the focused field.
-     *     - `press_button`: press a device button (back, home, the TV remote's keys).
-     *     - `open_url`: open a link: iOS refuses web, system and Apple's reserved schemes and opens any other URL in whatever app handles its scheme; Android sends it as a view intent to the session's app only.
+     *     - `press_button`: press a device button (back, the TV remote's keys; home, recents, lock and siri leave the app and are refused: `reason` `app_not_in_session`).
+     *     - `open_url`: open a link in the session's app: Android sends it as a view intent to the session's app only; iOS opens no link while the session stays in its app (`reason` `app_not_in_session`).
      *     - `set_posture`: fold or unfold a foldable device.
      *     - `rotate`: rotate the device.
      *     - `shake`: shake the device.
@@ -542,7 +594,7 @@ export interface paths {
      *     - `tap_focused_tv`: select the focused element (TV).
      *     - `focus_element_tv`: move the focus to an element (TV).
      *
-     *     The reading tools (`ui_tree`, `screenshot`, `logs`, `find_element`, `wait`) keep the session held but are not use; every other tool is use. A `screenshot` result is an inline data URL (`data:image/png;base64,...`), never a link. A tool that reached the device answers 200 with `ok` (see the result object for what `ok` false means and where its reason is). A tool outside this list is 422 `tool_refused`; bad `args` 422 `invalid_request` (`type_text` at most 10000 characters, `scroll_until_visible` at most 50 scrolls, `wait` at most 30 seconds; the body at most 64 KB). A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, a device that cannot run agent tools 409 `tool_refused`. A device that gave no answer (it did not reply in time, or nothing reached it) is 503 `device_unreachable` with `Retry-After`: the tool may or may not have acted. One tool runs on a session at a time; when 4 more already wait, a call is 429 `rate_limited` (`limit` `session_tools`, `Retry-After`). Not idempotent (no `Idempotency-Key`: a repeated tap is a second tap); read the session before retrying.
+     *     The reading tools (`ui_tree`, `screenshot`, `logs`, `find_element`, `wait`) keep the session held but are not use; every other tool is use. A `screenshot` result is an inline data URL (`data:image/png;base64,...`), never a link. A tool that reached the device answers 200 with `ok` (see the result object for what `ok` false means and where its reason is). A tool outside this list is 422 `tool_refused`; bad `args` 422 `invalid_request` (`type_text` at most 10000 characters, `scroll_until_visible` at most 50 scrolls, `wait` at most 30 seconds; the body at most 64 KB). A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (every tool, reads included; retry in a few seconds), a device that cannot run agent tools 409 `tool_refused`. A device that gave no answer (it did not reply in time, or nothing reached it) is 503 `device_unreachable` with `Retry-After`: the tool may or may not have acted. One tool runs on a session at a time; when 4 more already wait, a call is 429 `rate_limited` (`limit` `session_tools`, `Retry-After`). Not idempotent (no `Idempotency-Key`: a repeated tap is a second tap); read the session before retrying.
      */
     post: operations['run_agent_tool'];
     delete?: never;
@@ -586,7 +638,7 @@ export interface paths {
     put?: never;
     /**
      * Send input to a session's device
-     * @description Sends one input (a tap, a swipe, a button or key press, a rotation, a shake, a touch) to the device of an active session, as a person's live input. Any other `action` is 422 `invalid_request`. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`; a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).
+     * @description Sends one input (a tap, a swipe, a button or key press, a rotation, a shake, a touch) to the device of an active session, as a person's live input. Any other `action` is 422 `invalid_request`. A button or key that would leave the session's app (Home, the app switcher, Lock, Siri) is 409 `app_not_in_session` and is not sent. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).
      */
     post: operations['control_session'];
     delete?: never;
@@ -606,7 +658,7 @@ export interface paths {
     put?: never;
     /**
      * Open an app on a session's device
-     * @description Opens an app installed on the device of an active session, optionally with launch parameters (a flat JSON object; anything else is 422 `invalid_request`). Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`; a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).
+     * @description Opens the session's app on the device of an active session, optionally with launch parameters (a flat JSON object; anything else is 422 `invalid_request`). Any other app is 409 `app_not_in_session` and is not opened: the session stays in its app. Not idempotent (no `Idempotency-Key`: a repeated input is a second input); read the session before retrying. A session that is not `active` is 409 `session_not_active`, an ended one 409 `session_ended`, one whose app is not in front yet (or is being brought back) 409 `session_not_ready` (retry in a few seconds); a device that cannot be reached is 503 `device_unreachable` (retry after `Retry-After`).
      */
     post: operations['launch_app'];
     delete?: never;
@@ -664,7 +716,7 @@ export interface paths {
     };
     /**
      * List the account's usage
-     * @description What the account used, one record per UTC day and usage unit, from `from` to `to` (inclusive; default the current month so far; at most 92 days), ordered by day, then unit. A day's record can change until it is `final`. `price` is the unit price your contract had at the end of that day, never an amount. When `to` is today or later, `current_period` holds the month so far, computed now. `limit` 1 to 100 (default 10); `starting_after` a record id from the previous page (another id is 404 `usage_record_not_found`). A malformed day, `from` after `to`, a longer range or an unknown `unit` is 422 `invalid_request` naming the parameter.
+     * @description What the account used, one record per UTC day and usage unit, from `from` to `to` (inclusive; default the current month so far; at most 92 days), ordered by day, then unit. A day's record can change until it is `final`. `price` is the unit price your contract had at the end of that day, never an amount. When `to` is today or later, `current_period` holds the account's period so far, computed now. `limit` 1 to 100 (default 10); `starting_after` a record id from the previous page (another id is 404 `usage_record_not_found`). A malformed day, `from` after `to`, a longer range or an unknown `unit` is 422 `invalid_request` naming the parameter.
      */
     get: operations['list_account_usage'];
     put?: never;
@@ -737,6 +789,11 @@ export interface components {
       external_ref: string;
       /** Limits */
       limits?: Record<string, unknown> | null;
+      /**
+       * Period Anchor Day
+       * @description The day of month (UTC) the account's periods start on, 1 to 31; in a month without that day, the month's last day. The account's monthly limits reset at the start of each period. Defaults to the UTC day of month the account is created.
+       */
+      period_anchor_day?: number | null;
     };
     /** AccountDeletionOut */
     AccountDeletionOut: {
@@ -747,6 +804,8 @@ export interface components {
       display_name: string;
       /** External Ref */
       external_ref: string;
+      /** @description Extra streaming minutes left in the current period (on an add that named the previous period: in that period). */
+      extra: components['schemas']['Extra'];
       /** Id */
       id: string;
       limits: components['schemas']['Limits'];
@@ -759,6 +818,13 @@ export interface components {
        * @enum {string}
        */
       object?: 'account';
+      /** @description The account's current period (unix seconds, `end` exclusive): what its monthly limits count in. */
+      period: components['schemas']['Period'];
+      /**
+       * Period Anchor Day
+       * @description The day of month (UTC) the account's periods start on, 1 to 31; in a month without that day, the month's last day. The account's monthly limits reset at the start of each period.
+       */
+      period_anchor_day: number;
       /** Status */
       status: string;
       /** Suspended By */
@@ -788,6 +854,8 @@ export interface components {
       display_name: string;
       /** External Ref */
       external_ref: string;
+      /** @description Extra streaming minutes left in the current period (on an add that named the previous period: in that period). */
+      extra: components['schemas']['Extra'];
       /** Id */
       id: string;
       limits: components['schemas']['Limits'];
@@ -800,6 +868,13 @@ export interface components {
        * @enum {string}
        */
       object?: 'account';
+      /** @description The account's current period (unix seconds, `end` exclusive): what its monthly limits count in. */
+      period: components['schemas']['Period'];
+      /**
+       * Period Anchor Day
+       * @description The day of month (UTC) the account's periods start on, 1 to 31; in a month without that day, the month's last day. The account's monthly limits reset at the start of each period.
+       */
+      period_anchor_day: number;
       /** Status */
       status: string;
       /** Suspended By */
@@ -823,8 +898,15 @@ export interface components {
     AccountUpdate: {
       /** Display Name */
       display_name?: string | null;
+      /** @description Set what is left of the extra streaming minutes in the current period. 409 `extra_not_applicable` while `streaming_minutes_per_month` is `"unlimited"`. */
+      extra?: components['schemas']['ExtraUpdate'];
       /** Limits */
       limits?: Record<string, unknown> | null;
+      /**
+       * Period Anchor Day
+       * @description The day of month (UTC) the account's periods start on, 1 to 31; in a month without that day, the month's last day. The account's monthly limits reset at the start of each period. A change ends the current period at the next occurrence of the new day (its start is kept); 409 `period_change_blocked` while a session or build that started before the period current after the change (today, for a change to today's day) is still running.
+       */
+      period_anchor_day?: number;
     };
     /** AccountWithUsageOut */
     AccountWithUsageOut: {
@@ -834,6 +916,8 @@ export interface components {
       display_name: string;
       /** External Ref */
       external_ref: string;
+      /** @description Extra streaming minutes left in the current period (on an add that named the previous period: in that period). */
+      extra: components['schemas']['Extra'];
       /** Id */
       id: string;
       limits: components['schemas']['Limits'];
@@ -846,6 +930,13 @@ export interface components {
        * @enum {string}
        */
       object?: 'account';
+      /** @description The account's current period (unix seconds, `end` exclusive): what its monthly limits count in. */
+      period: components['schemas']['Period'];
+      /**
+       * Period Anchor Day
+       * @description The day of month (UTC) the account's periods start on, 1 to 31; in a month without that day, the month's last day. The account's monthly limits reset at the start of each period.
+       */
+      period_anchor_day: number;
       /** Status */
       status: string;
       /** Suspended By */
@@ -887,7 +978,8 @@ export interface components {
     };
     /**
      * AppLaunch
-     * @description Open an app installed on the session's device.
+     * @description Open the session's app again (with new launch parameters, for example). A session
+     *     stays in its app: any other app is refused (409 `app_not_in_session`).
      */
     AppLaunch: {
       /**
@@ -1146,6 +1238,26 @@ export interface components {
        */
       type: string;
     };
+    /** EmbedDeviceConfigOut */
+    EmbedDeviceConfigOut: {
+      /** Default Model */
+      default_model: string | null;
+      /** Default Os Version */
+      default_os_version: string | null;
+      /** Models */
+      models: string[];
+      /** Show Picker */
+      show_picker: boolean;
+    };
+    /** EmbedKeyLimits */
+    EmbedKeyLimits: {
+      /** Concurrent Sessions */
+      concurrent_sessions: number | null;
+      /** Max Session Minutes */
+      max_session_minutes: number | null;
+      /** Sessions Per Visitor */
+      sessions_per_visitor: number;
+    };
     /**
      * Error
      * @description The error object. `code` is stable (an open set: new codes may be added); `field` names the offending member by its JSON path (`allowed_ips[0]`) when there is one; a code may add its own fields (`required_scope`, `reason`, `max`, `id`). `x-vibeview-error-codes` lists the codes known today, each with its HTTP status (null when it is sent with more than one) and its meaning.
@@ -1175,12 +1287,16 @@ export interface components {
     /**
      * EventCutoff
      * @description The cutoff a ``session.cutoff_warning`` is about: ``reason``, the end reason the
-     *     session will end with (as ``end_reason`` names it), and ``ends_at``, when (unix
-     *     seconds).
+     *     session will end with (as ``end_reason`` names it), ``ends_at``, when (unix seconds; for
+     *     the usage limit an estimate at the current rate), and ``period``, the account period the
+     *     session is measured against (a session that started in the previous period still counts
+     *     there): the ``period_start`` to name when adding extra minutes for it. A warning recorded
+     *     before late November 2026 (the feed keeps 30 days) has no ``period``.
      */
     EventCutoff: {
       /** Ends At */
       ends_at: number;
+      period?: components['schemas']['Period'];
       /** Reason */
       reason: string;
     };
@@ -1188,15 +1304,25 @@ export interface components {
      * EventData
      * @description ``object``, and for some event types a member beside it: ``cutoff`` on
      *     ``session.cutoff_warning``, ``reason`` on ``share.deleted`` (``requested`` or
-     *     ``partner_terminated``, an open set); each absent from every other event.
+     *     ``partner_terminated``) and on ``embed_key.revoked`` (``requested``,
+     *     ``share_removed`` or ``partner_terminated``), each an open set; on ``session.created``
+     *     of a session an embed key's visitor started, ``created_via`` (``embed``), ``embed_key``
+     *     (the key's id) and ``visitor`` (the visitor token's ``sub``); each absent from every
+     *     other event.
      */
     EventData: {
+      /** Created Via */
+      created_via?: string;
       /** Cutoff */
       cutoff?: components['schemas']['EventCutoff'];
+      /** Embed Key */
+      embed_key?: string;
       /** Object */
       object: Record<string, unknown>;
       /** Reason */
       reason?: string;
+      /** Visitor */
+      visitor?: string;
     };
     /** EventList */
     EventList: {
@@ -1243,9 +1369,54 @@ export interface components {
     } & {
       [key: string]: unknown;
     };
+    /**
+     * Extra
+     * @description Extra streaming minutes of the account: used only after the period's monthly
+     *     minutes are used up, and ending with the period (`expires_at`, unix seconds, the period's
+     *     `end`): what is left is not carried over.
+     */
+    Extra: {
+      /** Expires At */
+      expires_at: number;
+      /**
+       * Streaming Minutes
+       * @description What is left now, in whole minutes rounded down.
+       */
+      streaming_minutes: number;
+    };
+    /**
+     * ExtraMinutesAdd
+     * @description Extra streaming minutes to add to one period of the account.
+     */
+    ExtraMinutesAdd: {
+      /**
+       * Period Start
+       * @description The period to add to, by its start (unix seconds, as `period.start` and `cutoff.period.start` give it). Default: the account's current period. The previous period is accepted only while a session that started in it is still running (to extend that session); any other value is 422 `invalid_request`.
+       */
+      period_start?: number | null;
+      /**
+       * Streaming Minutes
+       * @description Minutes to add, 1 to 100,000. A period's added total is at most 1,000,000 (422 `invalid_request`).
+       */
+      streaming_minutes: number;
+    };
+    /**
+     * ExtraUpdate
+     * @description Set what is left of the account's extra streaming minutes in its current period.
+     */
+    ExtraUpdate: {
+      /**
+       * Streaming Minutes
+       * @description What is LEFT of the account's extra streaming minutes in its current period from now on, 0 to 100,000, in whole minutes (up to 59 seconds can remain). It replaces whatever was added before it, including an add a moment earlier: use `POST .../extra-minutes` while sessions run, and this to settle. It is the account's whole period, not one session's: with other sessions running, leave what they still need (0 only when none is running).
+       */
+      streaming_minutes: number;
+    };
     /** Limits */
     Limits: {
-      /** Build Minutes Per Month */
+      /**
+       * Build Minutes Per Month
+       * @description Cloud build minutes per period of the account.
+       */
       build_minutes_per_month: number;
       /** Collab Guests Per Session */
       collab_guests_per_session: number | 'unlimited';
@@ -1257,8 +1428,59 @@ export interface components {
       max_session_minutes: number | 'unlimited';
       /** Storage Bytes */
       storage_bytes: number | 'unlimited';
-      /** Streaming Minutes Per Month */
+      /**
+       * Streaming Minutes Per Month
+       * @description Streaming minutes per period of the account.
+       */
       streaming_minutes_per_month: number | 'unlimited';
+    };
+    /**
+     * PartnerEmbedKey
+     * @description An embed key of your partner on an app your organization shares with it. ``id`` is
+     *     the key itself: public by design (it sits in the embedding page). Every session it
+     *     starts needs a visitor token signed with its visitor secret. ``platform`` is an open
+     *     set. Never the visitor secret.
+     */
+    PartnerEmbedKey: {
+      /** Allowed Domains */
+      allowed_domains: string[];
+      /** App */
+      app: string;
+      /** Created */
+      created: number;
+      device_config: components['schemas']['EmbedDeviceConfigOut'];
+      /** Id */
+      id: string;
+      limits: components['schemas']['EmbedKeyLimits'];
+      /** Livemode */
+      livemode: boolean;
+      /** Name */
+      name: string;
+      /**
+       * Object
+       * @default embed_key
+       * @constant
+       * @enum {string}
+       */
+      object?: 'embed_key';
+      /** Platform */
+      platform: string | null;
+      /** Previous Secret Expires At */
+      previous_secret_expires_at: number | null;
+    };
+    /** PartnerEmbedKeyList */
+    PartnerEmbedKeyList: {
+      /** Data */
+      data: components['schemas']['PartnerEmbedKey'][];
+      /** Has More */
+      has_more: boolean;
+      /**
+       * Object
+       * @default list
+       * @constant
+       * @enum {string}
+       */
+      object?: 'list';
     };
     /**
      * PartnerOut
@@ -1324,7 +1546,9 @@ export interface components {
     /**
      * SessionControl
      * @description One input to the device, as a person's live input. Coordinates are in the
-     *     device's screen pixels as the session's screenshots show them.
+     *     device's screen pixels as the session's screenshots show them. A button or key that
+     *     leaves the session's app (HOME, APP_SWITCH, RECENTS, LOCK, SIDE_BUTTON, SIRI,
+     *     APPLE_PAY) is refused (409 `app_not_in_session`).
      */
     SessionControl: {
       /**
@@ -1344,7 +1568,7 @@ export interface components {
         | 'touch_end';
       /**
        * Button
-       * @description iOS: HOME, LOCK, SIRI.
+       * @description BACK, MENU and so on.
        */
       button?: string | null;
       /**
@@ -1354,7 +1578,7 @@ export interface components {
       duration?: number | null;
       /**
        * Keycode
-       * @description Android: BACK, HOME, MENU, DPAD_UP and so on.
+       * @description Android: BACK, MENU, DPAD_UP and so on.
        */
       keycode?: string | null;
       /**
@@ -1398,14 +1622,18 @@ export interface components {
     /**
      * SessionCreate
      * @description A new session in the account. Name the device offering with the four fields
-     *     exactly as `GET /devices/pools` lists it; optionally name an app the account can use
-     *     (`GET /apps`: its own, or one shared with your partner) to install and open, with
-     *     launch parameters for it. Any other member is refused.
+     *     exactly as `GET /devices/pools` lists it, and the app the account can use (`GET
+     *     /apps`: its own, or one shared with your partner) to install and open, with launch
+     *     parameters for it. A session needs an app: without one the request is refused (422
+     *     `invalid_request`, `field` `app`). The session stays in its app: other apps, Home and
+     *     the app switcher are not available on its device. `labels` tag the session; with
+     *     `reuse` the account's live session with the same labels, app and offering is returned
+     *     instead of a new one. Any other member is refused.
      */
     SessionCreate: {
       /**
        * App
-       * @description An app the account can use, by its id as `GET /apps` lists it (its own, or one shared with your partner), to install and open.
+       * @description An app the account can use, by its id as `GET /apps` lists it (its own, or one shared with your partner), to install and open. Required: a request without it is refused (422 `invalid_request`).
        */
       app?: string | null;
       /**
@@ -1420,8 +1648,15 @@ export interface components {
        */
       device_type: 'ios' | 'android';
       /**
+       * Labels
+       * @description Up to 10 labels of your own for the session, returned on it and in its events. Keys and values are 1 to 64 characters of letters, digits and `. _ : -`; a key given twice keeps its last value. Not for personal data.
+       */
+      labels?: {
+        [key: string]: string;
+      } | null;
+      /**
        * Launch Params
-       * @description A flat JSON object handed to the app when it is opened (only with `app`).
+       * @description A flat JSON object handed to the app when it is opened (only with `app`). Not applied when `reuse` returns a session that already exists.
        */
       launch_params?: Record<string, unknown> | null;
       /**
@@ -1434,6 +1669,65 @@ export interface components {
        * @description The OS label (the OS's name and version; its shape differs by platform), opaque. Use it exactly as returned.
        */
       os_version: string;
+      /**
+       * Reuse
+       * @description Return the account's live session (pending, starting or active) that was created through this route with exactly the same `labels`, `app` and device offering, instead of creating another (answered 200 with `reused: true`). Needs at least one label.
+       * @default false
+       */
+      reuse?: boolean;
+    };
+    /**
+     * SessionCreated
+     * @description The session `POST /sessions/` created (201, `reused` false), or the live session
+     *     that `reuse` found (200, `reused` true).
+     */
+    SessionCreated: {
+      /** Account */
+      account: string;
+      /** App */
+      app: string | null;
+      /** Created */
+      created: number;
+      device: components['schemas']['SessionDevice'];
+      /** End Reason */
+      end_reason: string | null;
+      /** Ended */
+      ended: number | null;
+      /** Id */
+      id: string;
+      /**
+       * Labels
+       * @description The labels the session was created with (an empty object for none).
+       */
+      labels: {
+        [key: string]: string;
+      };
+      /** Livemode */
+      livemode: boolean;
+      /**
+       * Object
+       * @default session
+       * @constant
+       * @enum {string}
+       */
+      object: 'session';
+      queue: components['schemas']['SessionQueueOut'] | null;
+      /**
+       * Reused
+       * @description True when `reuse` returned a session that already existed.
+       */
+      reused: boolean;
+      /** Started */
+      started: number | null;
+      /** Status */
+      status: string;
+      /**
+       * Streaming Seconds
+       * @description The session's metered streaming time so far, in whole seconds rounded down: what the account's usage counts for it (up to now while it runs; 0 until it reached a device, and 0 while it is stopping, as the usage record counts it then). The sessions of a day can sum to up to one second per session less than that day's usage record.
+       */
+      streaming_seconds: number;
+      /** Warnings */
+      warnings: components['schemas']['SessionWarning'][];
     };
     /**
      * SessionDevice
@@ -1497,6 +1791,13 @@ export interface components {
       ended: number | null;
       /** Id */
       id: string;
+      /**
+       * Labels
+       * @description The labels the session was created with (an empty object for none).
+       */
+      labels: {
+        [key: string]: string;
+      };
       /** Livemode */
       livemode: boolean;
       /**
@@ -1511,6 +1812,11 @@ export interface components {
       started: number | null;
       /** Status */
       status: string;
+      /**
+       * Streaming Seconds
+       * @description The session's metered streaming time so far, in whole seconds rounded down: what the account's usage counts for it (up to now while it runs; 0 until it reached a device, and 0 while it is stopping, as the usage record counts it then). The sessions of a day can sum to up to one second per session less than that day's usage record.
+       */
+      streaming_seconds: number;
       /** Warnings */
       warnings: components['schemas']['SessionWarning'][];
     };
@@ -1680,12 +1986,15 @@ export interface components {
      *     ran close to the inactivity end. A device that gave no answer is never a result: it is
      *     503 ``device_unreachable``.
      *
-     *     ``reason`` (null unless ``ok`` is false because the device refused the tool's action):
+     *     ``reason`` (null unless ``ok`` is false because the device refused the tool's action),
+     *     an open set (new values may appear: handle one you do not know as ``action_failed``):
      *     ``element_not_visible`` (the element is not visible or is covered), ``gesture_failed``
      *     (a scroll, drag or long press could not be completed), ``alert_failed`` (no alert could
      *     be answered), ``no_app_launched`` (no app is in the foreground), ``link_not_opened``
-     *     (the app did not open the link), ``action_failed`` (any other refusal). Its sentence
-     *     is in the result's text.
+     *     (the app did not open the link), ``app_not_in_session`` (the session runs only its own
+     *     app: the tool would open another app or leave it, such as ``press_button`` home, or a
+     *     link on iOS), ``action_failed`` (any other refusal). Its sentence is in the result's
+     *     text.
      */
     ToolResultOut: {
       idle_warning: components['schemas']['ToolIdleWarning'] | null;
@@ -1700,16 +2009,7 @@ export interface components {
       /** Ok */
       ok: boolean;
       /** Reason */
-      reason:
-        | (
-            | 'element_not_visible'
-            | 'gesture_failed'
-            | 'alert_failed'
-            | 'no_app_launched'
-            | 'link_not_opened'
-            | 'action_failed'
-          )
-        | null;
+      reason: string | null;
       /** Result */
       result: unknown;
       /** Tool */
@@ -1717,10 +2017,11 @@ export interface components {
     };
     /**
      * Usage
-     * @description The calendar month (UTC) so far. Whole numbers only: ``streaming_seconds``
-     *     (sessions, live ones included, rounded down), ``build_minutes`` (every metered
-     *     minute of the month's finished builds, within the limit or past it, each build
-     *     rounded up to whole minutes as it is metered), ``storage_bytes`` (stored now).
+     * @description The account's current period so far (``period``: unix seconds, ``end``
+     *     exclusive). Whole numbers only: ``streaming_seconds`` (sessions that started in the
+     *     period, live ones included, rounded down), ``build_minutes`` (every metered minute of
+     *     the period's finished builds, within the limit or past it, each build rounded up to
+     *     whole minutes as it is metered), ``storage_bytes`` (stored now).
      */
     Usage: {
       /** Build Minutes */
@@ -1733,7 +2034,7 @@ export interface components {
     };
     /**
      * UsageCurrentPeriod
-     * @description The account's calendar month (UTC) so far, computed at `as_of` (unix seconds).
+     * @description The account's current period so far, computed at `as_of` (unix seconds).
      */
     UsageCurrentPeriod: {
       /** As Of */
@@ -2302,6 +2603,47 @@ export interface operations {
       };
     };
   };
+  add_extra_minutes: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description 1 to 255 visible ASCII characters; a repeat within 24 hours replays the answer. */
+        'Idempotency-Key'?: string;
+      };
+      path: {
+        /** @example ptn_0000000000000000 */
+        ptn: string;
+        /** @example org_0000000000000000 */
+        org: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ExtraMinutesAdd'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AccountOut'];
+        };
+      };
+      /** @description Error */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
   resume_account: {
     parameters: {
       query?: never;
@@ -2476,6 +2818,41 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['ContractOut'];
+        };
+      };
+      /** @description Error */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  list_embed_keys: {
+    parameters: {
+      query?: {
+        limit?: number;
+        starting_after?: string | null;
+      };
+      header?: never;
+      path: {
+        /** @example ptn_0000000000000000 */
+        ptn: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PartnerEmbedKeyList'];
         };
       };
       /** @description Error */
@@ -2882,13 +3259,22 @@ export interface operations {
       };
     };
     responses: {
+      /** @description `reuse` found a live session with the same labels: that session, `reused` true. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SessionCreated'];
+        };
+      };
       /** @description Successful Response */
       201: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['SessionOut'];
+          'application/json': components['schemas']['SessionCreated'];
         };
       };
       /** @description Error */

@@ -10,6 +10,7 @@ import type {
   AccountCreateParams,
   AccountDeleteParams,
   AccountDeletion,
+  AccountExtraMinutesParams,
   AccountListParams,
   AccountSuspendParams,
   AccountUpdateParams,
@@ -149,6 +150,23 @@ export class AccountsResource {
       body: body ?? undefined,
       options,
     });
+  }
+
+  /**
+   * Gives the account extra streaming minutes for one period: used only once that period's
+   * monthly minutes are used up, and ending with it (`account.extra.expires_at`). Each call
+   * adds `streaming_minutes`; the client sends an `Idempotency-Key`, the same on every
+   * retry, so a retry never adds twice. `period_start` defaults to the current period; pass
+   * a `session.cutoff_warning`'s `cutoff.period.start` to extend a session that started in
+   * the previous period. Answers the account, its `extra` being what is left in that period.
+   * Set what is left with `accounts.update(account, { extra: { streaming_minutes } })`.
+   */
+  addExtraMinutes(
+    account: string,
+    body: AccountExtraMinutesParams,
+    options?: RequestOptions,
+  ): Promise<APIResponse<Account>> {
+    return this.#t.request(OPERATIONS.add_extra_minutes, { path: { org: account }, body, options });
   }
 
   /** Resumes an account you suspended. */

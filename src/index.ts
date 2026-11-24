@@ -22,6 +22,7 @@ export {
 } from './resources/account-scoped';
 export {
   ContractResource,
+  EmbedKeysResource,
   PartnerResource,
   EventsResource,
   PartnerUsageResource,
@@ -29,6 +30,7 @@ export {
   WebhookDeliveriesResource,
   WebhookEndpointsResource,
 } from './resources/partner';
+export { signVisitorToken, VISITOR_TOKEN_MAX_TTL, type VisitorTokenParams } from './visitor-token';
 export {
   WebhookVerificationError,
   type WebhookHeaders,
@@ -42,6 +44,7 @@ export type {
   AccountCreateParams,
   AccountDeleteParams,
   AccountDeletion,
+  AccountExtraMinutesParams,
   AccountListParams,
   AccountSuspendParams,
   AccountUpdateParams,
@@ -66,6 +69,7 @@ export type {
   Session,
   SessionControlParams,
   SessionControlResult,
+  SessionCreated,
   SessionCreateParams,
   SessionLaunchAppParams,
   SessionLaunchAppResult,
@@ -74,6 +78,8 @@ export type {
   SessionRunAgentToolParams,
   Share,
   ShareListParams,
+  EmbedKey,
+  EmbedKeyListParams,
   UsageList,
   UsageListParams,
   UsageRecord,

@@ -34,6 +34,11 @@ export const ERROR_CODES = {
     meaning: "The app's build cannot run on the device the session asked for.",
   },
   app_not_found: { status: 404, meaning: 'No app this account can use has that id.' },
+  app_not_in_session: {
+    status: 409,
+    meaning:
+      'The session runs only its own app: this would open another app or leave it (Home, the app switcher, Lock).',
+  },
   busy: {
     status: 503,
     meaning: 'Another request holds what this one needs; retry after `Retry-After`.',
@@ -55,10 +60,16 @@ export const ERROR_CODES = {
     meaning:
       "The session's device gave no answer in time, or could not be reached: the input may or may not have acted. Read the session before you retry, after Retry-After.",
   },
+  embed_key_not_found: { status: 404, meaning: 'No live embed key of yours has that id.' },
   event_not_found: { status: 404, meaning: 'No event of yours from the last 30 days has that id.' },
   external_ref_taken: {
     status: 409,
     meaning: 'A live account of yours already has this `external_ref`; `account` names it.',
+  },
+  extra_not_applicable: {
+    status: 409,
+    meaning:
+      'The account\'s streaming_minutes_per_month is "unlimited": there are no extra minutes to give.',
   },
   idempotency_in_progress: {
     status: 409,
@@ -135,6 +146,11 @@ export const ERROR_CODES = {
       'This partner is being closed; only reads, revocations and account deletions are possible.',
   },
   partner_unavailable: { status: 403, meaning: 'The account cannot be used now.' },
+  period_change_blocked: {
+    status: 409,
+    meaning:
+      'A session or build of this account that started before the period this change would make current is still running; retry once it has ended.',
+  },
   queue_full: {
     status: 429,
     meaning:
@@ -144,6 +160,11 @@ export const ERROR_CODES = {
     status: 429,
     meaning: 'Too many requests; wait for `Retry-After` seconds, then retry with jitter.',
   },
+  session_create_in_progress: {
+    status: 409,
+    meaning:
+      'Another request is creating a session with the same labels in this account; retry in a moment.',
+  },
   session_ended: { status: 409, meaning: 'This session has ended.' },
   session_not_active: {
     status: 409,
@@ -151,6 +172,11 @@ export const ERROR_CODES = {
       'The session is not active: it is waiting for a device, starting or stopping. Read it and retry once it is active.',
   },
   session_not_found: { status: 404, meaning: 'No session of this account has that id.' },
+  session_not_ready: {
+    status: 409,
+    meaning:
+      "The session's app is not in front yet, or is being brought back: the device takes no input and no screen read now. Retry in a few seconds.",
+  },
   share_not_found: { status: 404, meaning: 'No live share of yours has that id.' },
   streaming_minutes_exhausted: {
     status: 403,
@@ -171,6 +197,15 @@ export const ERROR_CODES = {
     meaning: 'An error without a specific code yet, on any 4xx or 5xx status; read `message`.',
   },
   usage_record_not_found: { status: 404, meaning: 'No usage record you can read has that id.' },
+  visitor_account_invalid: {
+    status: 403,
+    meaning:
+      "The visitor token's account (`acc`) is not one of your accounts, or it cannot be used now.",
+  },
+  visitor_account_required: {
+    status: 403,
+    meaning: "A partner embed key's visitor token must name an account (`acc`).",
+  },
   webhook_delivery_not_found: {
     status: 404,
     meaning: 'No delivery of yours from the last 30 days has that id.',
